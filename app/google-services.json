@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "18695983493",
+    "project_id": "vox-ecosystem",
+    "storage_bucket": "vox-ecosystem.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:18695983493:android:6275434077e7dc83c8f4ec",
+        "android_client_info": {
+          "package_name": "com.voxcom.vox"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "18695983493-db4nprs49a6gv79ngog2uqmpi0u4ncjc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.voxcom.vox",
+            "certificate_hash": "25ee9989bcbfbab84ece17274f3c8808b1128e4e"
+          }
+        },
+        {
+          "client_id": "18695983493-0k3t3goa6kvl3h7ao89jd0vnp0u8n1fj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBrT7gdG-d5_KoNLzdT6CNuANULQ85eKiU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "18695983493-0k3t3goa6kvl3h7ao89jd0vnp0u8n1fj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
