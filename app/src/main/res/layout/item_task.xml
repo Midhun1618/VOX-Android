@@ -4,16 +4,30 @@
     android:layout_height="wrap_content"
     android:padding="14dp"
     android:layout_margin="5dp"
-    android:orientation="vertical"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
     android:background="@drawable/container_m"
     android:layout_marginBottom="10dp">
 
     <TextView
         android:id="@+id/tvTaskTitle"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
+        android:layout_weight="1"
         android:layout_height="wrap_content"
         android:text="Task title"
         android:textSize="16sp"
         android:textColor="@color/yellow_main"
+        android:fontFamily="@font/lowerpixel"/>
+    <ImageView
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@drawable/loading_red"/>
+    <TextView
+        android:id="@+id/tvTimeLeft"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="23h 59m"
+        android:textSize="16sp"
+        android:textColor="@color/red_main"
         android:fontFamily="@font/lowerpixel"/>
 </LinearLayout>

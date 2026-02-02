@@ -141,29 +141,17 @@ class MainActivity : AppCompatActivity() {
         db.collection("users")
             .document(uid)
             .collection("tasks")
+            .whereEqualTo("completed", false) // 👈 KEY LINE
             .addSnapshotListener { snapshot, error ->
 
-                if (error != null) {
-                    error.printStackTrace()
-                    return@addSnapshotListener
-                }
-
-                if (snapshot == null) {
-                    println("SNAPSHOT IS NULL")
-                    return@addSnapshotListener
-                }
-
-                println("SNAPSHOT SIZE = ${snapshot.size()}")
+                if (error != null || snapshot == null) return@addSnapshotListener
 
                 taskList.clear()
                 for (doc in snapshot.documents) {
-                    println("DOC ID = ${doc.id}")
-                    println("DOC DATA = ${doc.data}")
-
                     val task = Task(
                         id = doc.id,
                         title = doc.getString("title") ?: "",
-                        completed = doc.getBoolean("completed") ?: false,
+                        completed = false,
                         expiresAt = doc.getTimestamp("expiresAt")
                     )
                     taskList.add(task)
@@ -171,6 +159,7 @@ class MainActivity : AppCompatActivity() {
                 adapter.notifyDataSetChanged()
             }
     }
+
 
 
     // 📊 Load discipline stats
