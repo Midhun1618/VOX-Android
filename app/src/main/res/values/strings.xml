@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">VOX</string>
+    <string name="weather_not_found">"?°C"</string>
 </resources>

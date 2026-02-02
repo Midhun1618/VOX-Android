@@ -1,6 +1,7 @@
 package com.voxcom.vox
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
@@ -11,6 +12,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.SignInButton
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
+import com.google.firebase.firestore.FirebaseFirestore
 
 class LoginActivity : AppCompatActivity() {
 
@@ -42,6 +44,7 @@ class LoginActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         signInButton.setOnClickListener {
+            playClickSound()
             signIn()
         }
     }
@@ -62,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
 
                 auth.signInWithCredential(credential)
                     .addOnSuccessListener {
-                        goToMain()
+                        routeAfterLogin()
                     }
                     .addOnFailureListener {
                     }
@@ -74,4 +77,31 @@ class LoginActivity : AppCompatActivity() {
         startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
+    private fun routeAfterLogin() {
+        val user = FirebaseAuth.getInstance().currentUser!!
+        val uid = user.uid
+        val db = FirebaseFirestore.getInstance()
+
+        db.collection("users")
+            .document(uid)
+            .get()
+            .addOnSuccessListener { doc ->
+                if (doc.exists() && doc.contains("username")) {
+                    goToMain()
+                } else {
+                    startActivity(Intent(this, ProfileSettingsActivity::class.java))
+                }
+                finish()
+            }
+    }
+    private fun playClickSound() {
+        val mediaPlayer = MediaPlayer.create(this, R.raw.onclick01_sfx)
+        mediaPlayer.start()
+
+        mediaPlayer.setOnCompletionListener {
+            it.release() // prevent memory leak
+        }
+    }
+
+
 }

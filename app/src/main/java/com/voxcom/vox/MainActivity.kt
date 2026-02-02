@@ -1,9 +1,10 @@
 package com.voxcom.vox
 
+import android.Manifest
 import android.app.AlertDialog
+import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
@@ -17,13 +18,33 @@ import com.google.firebase.firestore.SetOptions
 import java.util.concurrent.TimeUnit
 import android.os.Handler
 import android.os.Looper
+import android.widget.ImageView
+import androidx.core.app.ActivityCompat
+import androidx.lifecycle.lifecycleScope
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
 
 class MainActivity : AppCompatActivity() {
+    private val avatarDrawables = listOf(
+        R.drawable.avatar1,
+        R.drawable.avatar2,
+        R.drawable.avatar3,
+        R.drawable.avatar4,
+        R.drawable.avatar5,
+        R.drawable.avatar6,
+        R.drawable.avatar7,
+        R.drawable.avatar8
+    )
 
+    private lateinit var api: WeatherApi
+    lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var db: FirebaseFirestore
     private lateinit var uid: String
 
@@ -35,6 +56,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val retrofit = Retrofit.Builder()
+            .baseUrl("https://api.openweathermap.org/data/2.5/")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        api = retrofit.create(WeatherApi::class.java)
+
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                100
+            )
+        }
+
+
         val user = FirebaseAuth.getInstance().currentUser
         if (user == null) {
             finish()
@@ -43,19 +84,22 @@ class MainActivity : AppCompatActivity() {
 
         uid = user.uid
         db = FirebaseFirestore.getInstance()
+        println("🔑 API KEY = '${BuildConfig.WEATHER_API_KEY}'")
 
+        val loadToggle = findViewById<ImageView>(R.id.loadBtn)
         val tvEmail = findViewById<TextView>(R.id.tvEmail)
+        val tvUsername = findViewById<TextView>(R.id.tvUsername)
+        val myAvatar = findViewById<ImageView>(R.id.myAvatar)
         val etTask = findViewById<EditText>(R.id.etTask)
         val btnAdd = findViewById<TextView>(R.id.btnAdd)
         val tvStats = findViewById<TextView>(R.id.tvStats)
         val rvTasks = findViewById<RecyclerView>(R.id.rvTasks)
         val tvCurrentTime = findViewById<TextView>(R.id.tvCurrentTime)
         val tvCurrentMeridian = findViewById<TextView>(R.id.tvCurrentMeridian)
-
+        val tvWeather = findViewById<TextView>(R.id.tvWeather)
 
         tvEmail.text = user.email ?: "No email found"
 
-        // 🧱 RecyclerView setup
         adapter = TaskAdapter(taskList) { task ->
             showCompleteTaskDialog(task.id)
         }
@@ -63,9 +107,9 @@ class MainActivity : AppCompatActivity() {
         rvTasks.layoutManager = LinearLayoutManager(this)
         rvTasks.adapter = adapter
 
-
         startClock(tvCurrentTime,tvCurrentMeridian)
         ensureUserDocument()
+        loadUserProfile(tvUsername, myAvatar)
         // 🔥 Cleanup expired tasks
         cleanupExpiredTasks()
 
@@ -109,9 +153,56 @@ class MainActivity : AppCompatActivity() {
             etTask.text.clear()
             loadStats(tvStats)
         }
+        loadToggle.setOnClickListener {
+            playClickSound()
+            val handler = Handler(Looper.getMainLooper())
+            var count = 0
+
+            val runnable = object : Runnable {
+                override fun run() {
+
+                    if (count % 2 == 0) {
+                        loadToggle.setImageResource(R.drawable.load1)
+                    } else {
+                        loadToggle.setImageResource(R.drawable.load2)
+                    }
+
+                    count++
+
+                    if (count < 6) {
+                        handler.postDelayed(this, 700)
+                    }
+                }
+            }
+
+            handler.post(runnable)
+        }
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            if (location != null) {
+                val lat = location.latitude
+                val lon = location.longitude
+                getWeatherByLocation(lat, lon,tvWeather)
+            }
+        }
+    }
+    fun getWeatherByLocation(lat: Double, lon: Double,tv: TextView) {
+        lifecycleScope.launch {
+            val response = api.getWeatherByLatLon(
+                lat,
+                lon,
+                BuildConfig.WEATHER_API_KEY
+            )
+
+            if (response.isSuccessful) {
+                val temp = response.body()?.main?.temp
+                tv.text = "$temp°C"
+
+            }
+        }
     }
 
-    // ⏰ Delete expired & not completed tasks
     private fun cleanupExpiredTasks() {
         val now = Timestamp.now()
 
@@ -128,7 +219,6 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    // 🔄 Load tasks in realtime
     private fun loadTasks() {
         db.collection("users")
             .document(uid)
@@ -152,9 +242,6 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-
-
-    // 📊 Load discipline stats
     private fun loadStats(tv: TextView) {
         db.collection("users")
             .document(uid)
@@ -175,7 +262,6 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
-    // 🎨 Custom completion dialog
     private fun showCompleteTaskDialog(taskId: String) {
         val dialogView = layoutInflater.inflate(
             R.layout.dialog_complete_task,
@@ -203,7 +289,6 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
-    // ✅ Mark task as completed
     private fun markTaskCompleted(taskId: String) {
         db.collection("users")
             .document(uid)
@@ -241,8 +326,8 @@ class MainActivity : AppCompatActivity() {
                 val timeFormat = SimpleDateFormat("hh:mm", Locale.getDefault())
                 val amPmFormat = SimpleDateFormat("a", Locale.getDefault())
 
-                tvTime.text = timeFormat.format(now)   // 11:11
-                tvAmPm.text = amPmFormat.format(now)   // AM / PM
+                tvTime.text = timeFormat.format(now)
+                tvAmPm.text = amPmFormat.format(now)
 
                 handler.postDelayed(this, 1000)
             }
@@ -255,8 +340,30 @@ class MainActivity : AppCompatActivity() {
         mediaPlayer.start()
 
         mediaPlayer.setOnCompletionListener {
-            it.release() // prevent memory leak
+            it.release()
         }
     }
+
+    private fun loadUserProfile(
+        tvUsername: TextView,
+        avatarView: ImageView
+    ) {
+        db.collection("users")
+            .document(uid)
+            .get()
+            .addOnSuccessListener { doc ->
+                if (!doc.exists()) return@addOnSuccessListener
+
+                val username = doc.getString("username")
+                val avatarIndex = doc.getLong("avatarIndex")?.toInt()
+
+                tvUsername.text = "Name :$username" ?: "User"
+
+                if (avatarIndex != null && avatarIndex in avatarDrawables.indices) {
+                    avatarView.setImageResource(avatarDrawables[avatarIndex])
+                }
+            }
+    }
+
 
 }

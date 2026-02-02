@@ -32,10 +32,10 @@
                 android:background="@drawable/container_m"
                 android:gravity="center_vertical">
                 <ImageView
+                    android:id="@+id/myAvatar"
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:layout_margin="5dp"
-                    android:src="@drawable/profile_img_m"
                     android:background="@drawable/container_m"/>
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -43,20 +43,19 @@
                     android:orientation="vertical"
                     android:paddingLeft="5dp">
                     <TextView
+                        android:id="@+id/tvUsername"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
                         android:fontFamily="@font/lowerpixel"
-                        android:textColor="@color/yellow_main"
-                        android:text="Name : Uername"/>
+                        android:textColor="@color/yellow_main"/>
                     <TextView
                         android:id="@+id/tvEmail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
                         android:fontFamily="@font/lowerpixel"
-                        android:textColor="@color/yellow_main"
-                        android:text="Tonystark@gmail.com"/>
+                        android:textColor="@color/yellow_main"/>
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -90,8 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:src="@drawable/vox_ring"
-                    />
+                    android:src="@drawable/vox_icon" />
 
             </LinearLayout>
         </LinearLayout>
@@ -117,10 +115,11 @@
                 android:orientation="vertical"
                 android:layout_margin="10dp">
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="0dp"
+                    android:id="@+id/tvWeather"
                     android:layout_weight="1"
-                    android:text="29° C"
+                    android:text="@string/weather_not_found"
                     android:textSize="15sp"
                     android:textColor="@color/yellow_main"
                     android:fontFamily="@font/lowerpixel"/>
@@ -133,6 +132,24 @@
                     android:textColor="@color/yellow_main"
                     android:fontFamily="@font/lowerpixel"/>
             </LinearLayout>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@color/yellow_main">
+
+                <ImageView
+                    android:id="@+id/loadBtn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_margin="8dp"
+                    android:src="@drawable/load1"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
             <TextView
                 android:id="@+id/tvStats"
                 android:layout_width="wrap_content"
