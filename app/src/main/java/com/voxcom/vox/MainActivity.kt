@@ -1,6 +1,7 @@
 package com.voxcom.vox
 
 import android.app.AlertDialog
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
 
         val tvEmail = findViewById<TextView>(R.id.tvEmail)
         val etTask = findViewById<EditText>(R.id.etTask)
-        val btnAdd = findViewById<Button>(R.id.btnAdd)
+        val btnAdd = findViewById<TextView>(R.id.btnAdd)
         val tvStats = findViewById<TextView>(R.id.tvStats)
         val rvTasks = findViewById<RecyclerView>(R.id.rvTasks)
         val tvCurrentTime = findViewById<TextView>(R.id.tvCurrentTime)
@@ -62,16 +63,6 @@ class MainActivity : AppCompatActivity() {
         rvTasks.layoutManager = LinearLayoutManager(this)
         rvTasks.adapter = adapter
 
-        taskList.add(
-            Task(
-                id = "test-id",
-                title = "RecyclerView test item",
-                completed = false,
-                expiresAt = null
-            )
-        )
-        adapter.notifyDataSetChanged()
-
 
         startClock(tvCurrentTime,tvCurrentMeridian)
         ensureUserDocument()
@@ -86,6 +77,7 @@ class MainActivity : AppCompatActivity() {
 
         // ➕ Add task
         btnAdd.setOnClickListener {
+            playClickSound()
             val title = etTask.text.toString().trim()
             if (title.isEmpty()) return@setOnClickListener
 
@@ -194,15 +186,17 @@ class MainActivity : AppCompatActivity() {
             .setView(dialogView)
             .create()
 
-        val btnYes = dialogView.findViewById<Button>(R.id.btnYes)
-        val btnNo = dialogView.findViewById<Button>(R.id.btnNo)
+        val btnYes = dialogView.findViewById<TextView>(R.id.btnYes)
+        val btnNo = dialogView.findViewById<TextView>(R.id.btnNo)
 
         btnYes.setOnClickListener {
             markTaskCompleted(taskId)
+            playClickSound()
             dialog.dismiss()
         }
 
         btnNo.setOnClickListener {
+            playClickSound()
             dialog.dismiss()
         }
 
@@ -256,6 +250,13 @@ class MainActivity : AppCompatActivity() {
 
         handler.post(runnable)
     }
+    private fun playClickSound() {
+        val mediaPlayer = MediaPlayer.create(this, R.raw.onclick01_sfx)
+        mediaPlayer.start()
 
+        mediaPlayer.setOnCompletionListener {
+            it.release() // prevent memory leak
+        }
+    }
 
 }

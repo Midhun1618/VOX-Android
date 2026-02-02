@@ -34,18 +34,36 @@
         android:gravity="end"
         android:orientation="horizontal">
 
-        <Button
+        <TextView
             android:id="@+id/btnNo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Not yet"/>
-
-        <Button
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginRight="3dp"
+            android:layout_height="match_parent"
+            android:textSize="18sp"
+            android:text="Not yet"
+            android:soundEffectsEnabled="false"
+            android:fontFamily="@font/lowerpixel"
+            android:textColor="@color/yellow_main"
+            android:padding="8dp"
+            android:textAlignment="center"
+            android:background="@drawable/container_m"/>
+        <TextView
             android:id="@+id/btnYes"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Done"
-            android:layout_marginStart="12dp"/>
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_marginRight="3dp"
+            android:layout_height="match_parent"
+            android:textSize="18sp"
+            android:textAlignment="center"
+            android:text="Yes"
+            android:soundEffectsEnabled="false"
+            android:textStyle="bold"
+            android:fontFamily="@font/lowerpixel"
+            android:textColor="@color/black"
+            android:padding="8dp"
+            android:background="@color/yellow_main"/>
+
     </LinearLayout>
 
 </LinearLayout>
