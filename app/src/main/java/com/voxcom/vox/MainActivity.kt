@@ -14,6 +14,12 @@ import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.SetOptions
 import java.util.concurrent.TimeUnit
+import android.os.Handler
+import android.os.Looper
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -42,6 +48,9 @@ class MainActivity : AppCompatActivity() {
         val btnAdd = findViewById<Button>(R.id.btnAdd)
         val tvStats = findViewById<TextView>(R.id.tvStats)
         val rvTasks = findViewById<RecyclerView>(R.id.rvTasks)
+        val tvCurrentTime = findViewById<TextView>(R.id.tvCurrentTime)
+        val tvCurrentMeridian = findViewById<TextView>(R.id.tvCurrentMeridian)
+
 
         tvEmail.text = user.email ?: "No email found"
 
@@ -64,6 +73,7 @@ class MainActivity : AppCompatActivity() {
         adapter.notifyDataSetChanged()
 
 
+        startClock(tvCurrentTime,tvCurrentMeridian)
         ensureUserDocument()
         // 🔥 Cleanup expired tasks
         cleanupExpiredTasks()
@@ -238,5 +248,25 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+    private fun startClock(tvTime: TextView, tvAmPm: TextView) {
+        val handler = Handler(Looper.getMainLooper())
+
+        val runnable = object : Runnable {
+            override fun run() {
+                val now = Date()
+
+                val timeFormat = SimpleDateFormat("hh:mm", Locale.getDefault())
+                val amPmFormat = SimpleDateFormat("a", Locale.getDefault())
+
+                tvTime.text = timeFormat.format(now)   // 11:11
+                tvAmPm.text = amPmFormat.format(now)   // AM / PM
+
+                handler.postDelayed(this, 1000)
+            }
+        }
+
+        handler.post(runnable)
+    }
+
 
 }

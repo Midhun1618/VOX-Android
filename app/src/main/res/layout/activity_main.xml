@@ -103,6 +103,7 @@
             android:gravity="center_vertical"
             android:background="@drawable/container_m">
             <TextView
+                android:id="@+id/tvCurrentTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="50sp"
@@ -124,6 +125,7 @@
                     android:textColor="@color/yellow_main"
                     android:fontFamily="@font/lowerpixel"/>
                 <TextView
+                    android:id="@+id/tvCurrentMeridian"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="PM"
