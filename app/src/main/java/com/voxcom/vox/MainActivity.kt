@@ -12,6 +12,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.SetOptions
 import java.util.concurrent.TimeUnit
 
 class MainActivity : AppCompatActivity() {
@@ -52,6 +53,18 @@ class MainActivity : AppCompatActivity() {
         rvTasks.layoutManager = LinearLayoutManager(this)
         rvTasks.adapter = adapter
 
+        taskList.add(
+            Task(
+                id = "test-id",
+                title = "RecyclerView test item",
+                completed = false,
+                expiresAt = null
+            )
+        )
+        adapter.notifyDataSetChanged()
+
+
+        ensureUserDocument()
         // 🔥 Cleanup expired tasks
         cleanupExpiredTasks()
 
@@ -86,7 +99,10 @@ class MainActivity : AppCompatActivity() {
 
             db.collection("users")
                 .document(uid)
-                .update("totalTasks", FieldValue.increment(1))
+                .set(
+                    mapOf("totalTasks" to FieldValue.increment(1)),
+                    SetOptions.merge()
+                )
 
             etTask.text.clear()
             loadStats(tvStats)
@@ -115,12 +131,25 @@ class MainActivity : AppCompatActivity() {
         db.collection("users")
             .document(uid)
             .collection("tasks")
-            .whereEqualTo("completed", false)
-            .addSnapshotListener { snapshot, _ ->
-                if (snapshot == null) return@addSnapshotListener
+            .addSnapshotListener { snapshot, error ->
+
+                if (error != null) {
+                    error.printStackTrace()
+                    return@addSnapshotListener
+                }
+
+                if (snapshot == null) {
+                    println("SNAPSHOT IS NULL")
+                    return@addSnapshotListener
+                }
+
+                println("SNAPSHOT SIZE = ${snapshot.size()}")
 
                 taskList.clear()
                 for (doc in snapshot.documents) {
+                    println("DOC ID = ${doc.id}")
+                    println("DOC DATA = ${doc.data}")
+
                     val task = Task(
                         id = doc.id,
                         title = doc.getString("title") ?: "",
@@ -132,6 +161,7 @@ class MainActivity : AppCompatActivity() {
                 adapter.notifyDataSetChanged()
             }
     }
+
 
     // 📊 Load discipline stats
     private fun loadStats(tv: TextView) {
@@ -193,4 +223,20 @@ class MainActivity : AppCompatActivity() {
                     .update("completedTasks", FieldValue.increment(1))
             }
     }
+    private fun ensureUserDocument() {
+        val userRef = db.collection("users").document(uid)
+
+        userRef.get().addOnSuccessListener { doc ->
+            if (!doc.exists()) {
+                val data = hashMapOf(
+                    "email" to FirebaseAuth.getInstance().currentUser?.email,
+                    "totalTasks" to 0,
+                    "completedTasks" to 0,
+                    "createdAt" to Timestamp.now()
+                )
+                userRef.set(data)
+            }
+        }
+    }
+
 }

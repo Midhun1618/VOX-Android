@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="14dp"
+    android:layout_margin="5dp"
     android:orientation="vertical"
     android:background="@drawable/container_m"
     android:layout_marginBottom="10dp">
@@ -13,6 +14,6 @@
         android:layout_height="wrap_content"
         android:text="Task title"
         android:textSize="16sp"
-        android:textColor="@color/black"
+        android:textColor="@color/yellow_main"
         android:fontFamily="@font/lowerpixel"/>
 </LinearLayout>
