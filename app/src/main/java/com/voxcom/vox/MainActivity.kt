@@ -87,6 +87,7 @@ class MainActivity : AppCompatActivity() {
         println("🔑 API KEY = '${BuildConfig.WEATHER_API_KEY}'")
 
         val loadToggle = findViewById<ImageView>(R.id.loadBtn)
+        val voxEmote = findViewById<ImageView>(R.id.voxEmote)
         val tvEmail = findViewById<TextView>(R.id.tvEmail)
         val tvUsername = findViewById<TextView>(R.id.tvUsername)
         val myAvatar = findViewById<ImageView>(R.id.myAvatar)
@@ -178,6 +179,34 @@ class MainActivity : AppCompatActivity() {
 
             handler.post(runnable)
         }
+        voxEmote.setOnClickListener {
+            playWakeTone()
+
+            val handler = Handler(Looper.getMainLooper())
+
+            // 1. ZOOM IN (Start immediately)
+            // Scale to 1.05 (5% larger) over 200ms
+            voxEmote.animate().scaleX(1.05f).scaleY(1.05f).setDuration(200).start()
+
+            // 2. IMAGE SEQUENCE
+            // Initial state
+            voxEmote.setImageResource(R.drawable.vox_icon_neutral)
+
+            // Schedule frames
+            handler.postDelayed({ voxEmote.setImageResource(R.drawable.vox_icon) }, 300)
+            handler.postDelayed({ voxEmote.setImageResource(R.drawable.vox_icon_neutral) }, 600)
+            handler.postDelayed({ voxEmote.setImageResource(R.drawable.vox_icon_bad) }, 900)
+
+            // Final frame change
+            handler.postDelayed({
+                voxEmote.setImageResource(R.drawable.vox_icon_neutral)
+
+                // 3. ZOOM OUT (Return to 1.0)
+                // We trigger this at the same time as the last image change
+                voxEmote.animate().scaleX(1.0f).scaleY(1.0f).setDuration(200).start()
+            }, 1200)
+        }
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         fusedLocationClient.lastLocation.addOnSuccessListener { location ->
@@ -339,6 +368,14 @@ class MainActivity : AppCompatActivity() {
     }
     private fun playClickSound() {
         val mediaPlayer = MediaPlayer.create(this, R.raw.onclick01_sfx)
+        mediaPlayer.start()
+
+        mediaPlayer.setOnCompletionListener {
+            it.release()
+        }
+    }
+    private fun playWakeTone() {
+        val mediaPlayer = MediaPlayer.create(this, R.raw.waketone)
         mediaPlayer.start()
 
         mediaPlayer.setOnCompletionListener {

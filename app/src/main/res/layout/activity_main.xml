@@ -87,10 +87,12 @@
                     android:textSize="18sp"
                     android:textColor="@color/black"/>
                 <ImageView
+                    android:id="@+id/voxEmote"
                     android:layout_width="match_parent"
                     android:layout_height="0dp"
                     android:layout_weight="1"
-                    android:src="@drawable/vox_icon" />
+                    android:layout_margin="8dp"
+                    android:src="@drawable/vox_icon_neutral" />
 
             </LinearLayout>
         </LinearLayout>
