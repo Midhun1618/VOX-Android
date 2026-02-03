@@ -97,6 +97,7 @@ class MainActivity : AppCompatActivity() {
         val tvCurrentTime = findViewById<TextView>(R.id.tvCurrentTime)
         val tvCurrentMeridian = findViewById<TextView>(R.id.tvCurrentMeridian)
         val tvWeather = findViewById<TextView>(R.id.tvWeather)
+        val tvCode = findViewById<TextView>(R.id.codeTv)
 
         tvEmail.text = user.email ?: "No email found"
 
@@ -109,7 +110,7 @@ class MainActivity : AppCompatActivity() {
 
         startClock(tvCurrentTime,tvCurrentMeridian)
         ensureUserDocument()
-        loadUserProfile(tvUsername, myAvatar)
+        loadUserProfile(tvUsername, myAvatar,tvCode)
         // 🔥 Cleanup expired tasks
         cleanupExpiredTasks()
 
@@ -301,6 +302,7 @@ class MainActivity : AppCompatActivity() {
                     .update("completedTasks", FieldValue.increment(1))
             }
     }
+
     private fun ensureUserDocument() {
         val userRef = db.collection("users").document(uid)
 
@@ -346,7 +348,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun loadUserProfile(
         tvUsername: TextView,
-        avatarView: ImageView
+        avatarView: ImageView,
+        code: TextView
     ) {
         db.collection("users")
             .document(uid)
@@ -356,8 +359,9 @@ class MainActivity : AppCompatActivity() {
 
                 val username = doc.getString("username")
                 val avatarIndex = doc.getLong("avatarIndex")?.toInt()
-
+                val accessCode = doc.getString("accessCode")
                 tvUsername.text = "Name :$username" ?: "User"
+                code.text = "CODE : $accessCode" ?: "ERROR:404"
 
                 if (avatarIndex != null && avatarIndex in avatarDrawables.indices) {
                     avatarView.setImageResource(avatarDrawables[avatarIndex])

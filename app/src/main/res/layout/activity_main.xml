@@ -57,6 +57,7 @@
                         android:fontFamily="@font/lowerpixel"
                         android:textColor="@color/yellow_main"/>
                     <TextView
+                        android:id="@+id/codeTv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textSize="18sp"
@@ -66,7 +67,7 @@
                         android:paddingLeft="5dp"
                         android:layout_marginRight="5dp"
                         android:background="@color/yellow_main"
-                        android:text="Not connected"/>
+                        android:text="CODE :"/>
                 </LinearLayout>
 
             </LinearLayout>

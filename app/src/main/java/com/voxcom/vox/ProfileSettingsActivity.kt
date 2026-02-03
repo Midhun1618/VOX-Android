@@ -57,47 +57,56 @@ class ProfileSettingsActivity : AppCompatActivity() {
                 playClickSound()
                 selectedAvatar = index
 
-                // reset all
                 avatarViews.forEach {
                     it.setBackgroundResource(R.drawable.container_m)
                 }
 
-                // highlight selected
                 imageView.setBackgroundResource(R.drawable.container_x)
 
-                // update preview
                 avatar.setImageResource(avatarDrawables[index])
             }
         }
 
         btnSave.setOnClickListener {
             playClickSound()
+
             val username = etUsername.text.toString().trim()
             if (username.isEmpty()) return@setOnClickListener
 
-            val data = mapOf(
+            val userRef = db.collection("users").document(uid)
+
+            val data = hashMapOf(
+                "email" to FirebaseAuth.getInstance().currentUser?.email,
                 "username" to username,
-                "avatarIndex" to selectedAvatar
+                "avatarIndex" to selectedAvatar,
+                "accessCode" to generateAccessCode(),
+                "totalTask" to 0,
+                "completedTask" to 0,
+                "createdAt" to com.google.firebase.Timestamp.now()
             )
 
-            db.collection("users")
-                .document(uid)
-                .set(data, SetOptions.merge())
+            userRef.set(data)
                 .addOnSuccessListener {
-                    startActivity(
-                        Intent(this, MainActivity::class.java)
-                    )
+                    // ✅ User document is now COMPLETE
+                    startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 }
         }
+
     }
     private fun playClickSound() {
         val mediaPlayer = MediaPlayer.create(this, R.raw.onclick01_sfx)
         mediaPlayer.start()
 
         mediaPlayer.setOnCompletionListener {
-            it.release() // prevent memory leak
+            it.release()
         }
+    }
+    private fun generateAccessCode(): String {
+        val chars = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789"
+        return (1..6)
+            .map { chars.random() }
+            .joinToString("")
     }
 
 }

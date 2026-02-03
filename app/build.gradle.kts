@@ -7,12 +7,12 @@ plugins {
 android {
     namespace = "com.voxcom.vox"
     val weatherApiKey: String = project.findProperty("WEATHER_API_KEY") as String? ?: ""
-    compileSdk = 36
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.voxcom.vox"
         minSdk = 24
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -55,18 +55,22 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+
     implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+
+    // ✅ Credential Manager (modern Google Sign-In)
     implementation(libs.androidx.credentials)
     implementation(libs.androidx.credentials.play.services.auth)
     implementation(libs.googleid)
+
     implementation(libs.play.services.location)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation(libs.firebase.firestore)
 
-    implementation("com.squareup.retrofit2:retrofit:2.11.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.11.0")
-    implementation("com.google.android.gms:play-services-auth:21.0.1")
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
 
 }
