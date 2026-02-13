@@ -21,7 +21,7 @@ object VoxCommandProcessor {
 
     private fun extractTask(text: String): String? {
 
-        val regex = Regex("add( the)? task", RegexOption.IGNORE_CASE)
+        val regex = Regex("""add\s+(?:the\s+|a\s+)?task""", RegexOption.IGNORE_CASE)
         val match = regex.find(text) ?: return null
 
         val task = text.substring(match.range.last + 1).trim()
