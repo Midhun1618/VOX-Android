@@ -26,6 +26,20 @@
             android:name=".VoxService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
+        <service
+            android:name=".VoxTileService"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
+            android:exported="true"
+            android:icon="@drawable/vox_icon_tile"
+            android:label="VOX">
+
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE"/>
+            </intent-filter>
+
+        </service>
+
+
 
         <activity
             android:name=".ProfileSettingsActivity"

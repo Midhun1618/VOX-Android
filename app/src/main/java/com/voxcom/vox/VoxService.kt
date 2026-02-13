@@ -1,44 +1,43 @@
 package com.voxcom.vox
 
-import android.app.*
-import android.content.Context
+import android.app.Notification
+import android.app.PendingIntent
+import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
-import android.media.VolumeProvider
-import android.media.session.MediaSession
-import android.media.session.PlaybackState
 import android.os.Build
 import android.os.IBinder
-import android.view.KeyEvent
 import androidx.core.app.NotificationCompat
 
 class VoxService : Service() {
 
-    private val CHANNEL_ID = "vox_service_channel"
-    private lateinit var mediaSession: MediaSession
-    private val pressTimes = mutableListOf<Long>()
+    companion object {
+        const val ACTION_WAKE = "VOX_WAKE"
+        const val ACTION_START = "VOX_START"
+    }
 
+    private val CHANNEL_ID = "vox_service_channel"
 
     override fun onCreate() {
         super.onCreate()
-
-        setupVolumeInterceptor()
-
 
         if (!VoxPrefs.isEnabled(this)) {
             stopSelf()
             return
         }
 
-        val notification = buildNotification()
-
-        // IMPORTANT: call immediately
-        startForeground(1, notification)
+        startForeground(1, buildNotification())
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+
+        if (intent?.action == "VOX_WAKE") {
+            startListeningMode()
+        }
+
         return START_STICKY
     }
+
 
     override fun onBind(intent: Intent?): IBinder? = null
 
@@ -52,54 +51,23 @@ class VoxService : Service() {
 
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle("VOX Assistant Active")
-            .setContentText("Waiting for trigger")
-            .setSmallIcon(R.mipmap.ic_launcher) // MUST be app icon
+            .setContentText("Listening for trigger")
+            .setSmallIcon(R.drawable.ic_stat_vox)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
-            .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
             .setCategory(Notification.CATEGORY_SERVICE)
             .build()
     }
-    private fun detectTriplePress() {
-        val now = System.currentTimeMillis()
 
-        pressTimes.add(now)
-        pressTimes.removeAll { now - it > 800 }
-
-        if (pressTimes.size >= 3) {
-            pressTimes.clear()
-            onVoxTriggered()
-        }
-    }
-
-    private fun onVoxTriggered() {
-        playWakeTone()
-    }
     private fun playWakeTone() {
         val mp = MediaPlayer.create(this, R.raw.waketone)
         mp.setOnCompletionListener { it.release() }
         mp.start()
     }
-    private fun setupVolumeInterceptor() {
+    private fun startListeningMode() {
+        playWakeTone()
 
-        mediaSession = MediaSession(this, "VOX_SESSION")
-
-        val volumeProvider = object : VolumeProvider(
-            VolumeProvider.VOLUME_CONTROL_RELATIVE,
-            100,
-            50
-        ) {
-            override fun onAdjustVolume(direction: Int) {
-
-                if (direction < 0) { // volume down
-                    detectTriplePress()
-                }
-            }
-        }
-
-        mediaSession.setPlaybackToRemote(volumeProvider)
-        mediaSession.isActive = true
+        android.util.Log.d("VOX", "Assistant Activated")
     }
-
 
 }
