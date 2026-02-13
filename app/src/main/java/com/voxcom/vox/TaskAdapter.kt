@@ -42,17 +42,18 @@ class TaskAdapter(
 
     // ⏳ Time left calculation
     private fun calculateTimeLeft(expiresAt: Timestamp?): String {
-        if (expiresAt == null) return "⏳ --"
+        if (expiresAt == null) return "--"
 
         val now = System.currentTimeMillis()
         val expiryMillis = expiresAt.toDate().time
         val diff = expiryMillis - now
 
-        if (diff <= 0) return "⏳ Expired"
+        if (diff <= 0) return "Expired"
 
         val hours = TimeUnit.MILLISECONDS.toHours(diff)
         val minutes = TimeUnit.MILLISECONDS.toMinutes(diff) % 60
 
         return "${hours}h ${minutes}m"
     }
+
 }

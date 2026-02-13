@@ -2,6 +2,8 @@ package com.voxcom.vox
 
 import android.Manifest
 import android.app.AlertDialog
+import android.app.Dialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -19,6 +21,7 @@ import java.util.concurrent.TimeUnit
 import android.os.Handler
 import android.os.Looper
 import android.widget.ImageView
+import android.widget.Switch
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.lifecycleScope
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -55,6 +58,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        VoxNotification.createChannel(this)
 
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.openweathermap.org/data/2.5/")
@@ -184,20 +189,14 @@ class MainActivity : AppCompatActivity() {
 
             val handler = Handler(Looper.getMainLooper())
 
-            // 1. ZOOM IN (Start immediately)
-            // Scale to 1.05 (5% larger) over 200ms
             voxEmote.animate().scaleX(1.05f).scaleY(1.05f).setDuration(200).start()
 
-            // 2. IMAGE SEQUENCE
-            // Initial state
             voxEmote.setImageResource(R.drawable.vox_icon_neutral)
 
-            // Schedule frames
-            handler.postDelayed({ voxEmote.setImageResource(R.drawable.vox_icon) }, 300)
-            handler.postDelayed({ voxEmote.setImageResource(R.drawable.vox_icon_neutral) }, 600)
-            handler.postDelayed({ voxEmote.setImageResource(R.drawable.vox_icon_bad) }, 900)
+            handler.postDelayed({ voxEmote.setImageResource(R.drawable.vox_icon) }, 200)
+            handler.postDelayed({ voxEmote.setImageResource(R.drawable.vox_icon_neutral) }, 400)
+            handler.postDelayed({ voxEmote.setImageResource(R.drawable.vox_icon_bad) }, 600)
 
-            // Final frame change
             handler.postDelayed({
                 voxEmote.setImageResource(R.drawable.vox_icon_neutral)
 
@@ -205,6 +204,10 @@ class MainActivity : AppCompatActivity() {
                 // We trigger this at the same time as the last image change
                 voxEmote.animate().scaleX(1.0f).scaleY(1.0f).setDuration(200).start()
             }, 1200)
+        }
+        voxEmote.setOnLongClickListener{
+            showVoxPref()
+            true
         }
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -383,11 +386,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun loadUserProfile(
-        tvUsername: TextView,
-        avatarView: ImageView,
-        code: TextView
-    ) {
+    private fun loadUserProfile(tvUsername: TextView, avatarView: ImageView, code: TextView ) {
         db.collection("users")
             .document(uid)
             .get()
@@ -406,5 +405,73 @@ class MainActivity : AppCompatActivity() {
             }
     }
 
+    private fun showVoxPref() {
+
+        val dialog = Dialog(this)
+        dialog.setContentView(R.layout.vox_pref_popup)
+        dialog.setCancelable(true)
+
+        val voxSwitch = dialog.findViewById<Switch>(R.id.switch_vox)
+
+        // Load saved state
+        voxSwitch.isChecked = VoxPrefs.isEnabled(this)
+
+        voxSwitch.setOnCheckedChangeListener { _, isChecked ->
+
+            VoxPrefs.setEnabled(this, isChecked)
+
+            if (isChecked) {
+                requestNotificationPermissionAndStartService()
+            } else {
+                stopService(Intent(this, VoxService::class.java))
+            }
+        }
+
+
+        dialog.show()
+    }
+
+
+    private fun startVoxService() {
+
+        Handler(Looper.getMainLooper()).post {
+            val intent = Intent(this, VoxService::class.java)
+
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+                startForegroundService(intent)
+            else
+                startService(intent)
+        }
+    }
+
+    private val notificationPermissionLauncher =
+        registerForActivityResult(
+            androidx.activity.result.contract.ActivityResultContracts.RequestPermission()
+        ) { granted ->
+
+            if (granted) {
+                startVoxService()
+            } else {
+                // user denied → disable switch again
+                VoxPrefs.setEnabled(this, false)
+            }
+        }
+
+    private fun requestNotificationPermissionAndStartService() {
+
+        if (android.os.Build.VERSION.SDK_INT < 33) {
+            startVoxService()
+            return
+        }
+
+        if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS)
+            == PackageManager.PERMISSION_GRANTED) {
+
+            startVoxService()
+
+        } else {
+            notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
 
 }
