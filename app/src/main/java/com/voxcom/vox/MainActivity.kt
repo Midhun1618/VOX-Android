@@ -68,6 +68,13 @@ class MainActivity : AppCompatActivity() {
 
         api = retrofit.create(WeatherApi::class.java)
 
+        if (checkSelfPermission(android.Manifest.permission.RECORD_AUDIO)
+            != PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissions(arrayOf(android.Manifest.permission.RECORD_AUDIO), 500)
+        }
+
+
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
@@ -204,6 +211,13 @@ class MainActivity : AppCompatActivity() {
                 // We trigger this at the same time as the last image change
                 voxEmote.animate().scaleX(1.0f).scaleY(1.0f).setDuration(200).start()
             }, 1200)
+            val vox = VoxSpeechRecognizer(this)
+
+            vox.startListening { text ->
+                VoxCommandProcessor.process(this, text)
+            }
+
+
         }
         voxEmote.setOnLongClickListener{
             showVoxPref()
@@ -473,5 +487,4 @@ class MainActivity : AppCompatActivity() {
             notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
         }
     }
-
 }

@@ -10,13 +10,13 @@ import android.os.IBinder
 import androidx.core.app.NotificationCompat
 
 class VoxService : Service() {
-
     companion object {
         const val ACTION_WAKE = "VOX_WAKE"
         const val ACTION_START = "VOX_START"
     }
 
     private val CHANNEL_ID = "vox_service_channel"
+    private lateinit var vox: VoxSpeechRecognizer
 
     override fun onCreate() {
         super.onCreate()
@@ -64,10 +64,17 @@ class VoxService : Service() {
         mp.setOnCompletionListener { it.release() }
         mp.start()
     }
+
     private fun startListeningMode() {
+
         playWakeTone()
 
-        android.util.Log.d("VOX", "Assistant Activated")
+        vox = VoxSpeechRecognizer(this)
+
+        vox.startListening { text ->
+            VoxCommandProcessor.process(this, text)
+        }
     }
+
 
 }
