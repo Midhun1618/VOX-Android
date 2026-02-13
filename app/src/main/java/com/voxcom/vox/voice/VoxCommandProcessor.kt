@@ -1,4 +1,4 @@
-package com.voxcom.vox
+package com.voxcom.vox.voice
 
 import android.content.Context
 import android.widget.Toast
@@ -35,7 +35,7 @@ object VoxCommandProcessor {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val db = FirebaseFirestore.getInstance()
 
-        val now = Timestamp.now()
+        val now = Timestamp.Companion.now()
         val expiresAt = Timestamp(now.seconds + 86400, 0)
 
         val task = hashMapOf(

@@ -1,16 +1,17 @@
-package com.voxcom.vox
+package com.voxcom.vox.ui.profile
 
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.SetOptions
+import com.voxcom.vox.R
+import com.voxcom.vox.ui.main.MainActivity
 
 class ProfileSettingsActivity : AppCompatActivity() {
 
@@ -82,7 +83,7 @@ class ProfileSettingsActivity : AppCompatActivity() {
                 "accessCode" to generateAccessCode(),
                 "totalTask" to 0,
                 "completedTask" to 0,
-                "createdAt" to com.google.firebase.Timestamp.now()
+                "createdAt" to Timestamp.now()
             )
 
             userRef.set(data)

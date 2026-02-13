@@ -24,39 +24,33 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.VOX">
         <service
-            android:name=".VoxService"
+            android:name=".service.VoxService"
             android:exported="false"
             android:foregroundServiceType="dataSync" />
         <service
-            android:name=".VoxTileService"
+            android:name=".service.VoxTileService"
             android:permission="android.permission.BIND_QUICK_SETTINGS_TILE"
             android:exported="true"
             android:icon="@drawable/vox_icon_tile"
             android:label="VOX">
-
             <intent-filter>
                 <action android:name="android.service.quicksettings.action.QS_TILE"/>
             </intent-filter>
-
         </service>
-
-
-
         <activity
-            android:name=".ProfileSettingsActivity"
+            android:name=".ui.profile.ProfileSettingsActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.auth.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
-            android:exported="false"></activity>
+            android:name=".ui.main.MainActivity"
+            android:exported="false"/>
     </application>
 
 </manifest>

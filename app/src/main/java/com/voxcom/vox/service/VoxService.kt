@@ -1,13 +1,17 @@
-package com.voxcom.vox
+package com.voxcom.vox.service
 
 import android.app.Notification
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
 import android.media.MediaPlayer
-import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
+import com.voxcom.vox.R
+import com.voxcom.vox.system.VoxPrefs
+import com.voxcom.vox.ui.main.MainActivity
+import com.voxcom.vox.voice.VoxCommandProcessor
+import com.voxcom.vox.voice.VoxSpeechRecognizer
 
 class VoxService : Service() {
     companion object {

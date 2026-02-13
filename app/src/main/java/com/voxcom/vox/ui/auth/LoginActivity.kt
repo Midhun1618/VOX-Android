@@ -1,4 +1,4 @@
-package com.voxcom.vox
+package com.voxcom.vox.ui.auth
 
 import android.content.Intent
 import android.media.MediaPlayer
@@ -7,6 +7,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.credentials.CredentialManager
+import androidx.credentials.CustomCredential
 import androidx.credentials.GetCredentialRequest
 import androidx.credentials.exceptions.GetCredentialException
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +16,9 @@ import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.firestore.FirebaseFirestore
+import com.voxcom.vox.ui.profile.ProfileSettingsActivity
+import com.voxcom.vox.R
+import com.voxcom.vox.ui.main.MainActivity
 import kotlinx.coroutines.launch
 
 class LoginActivity : AppCompatActivity() {
@@ -26,7 +30,6 @@ class LoginActivity : AppCompatActivity() {
 
         auth = FirebaseAuth.getInstance()
 
-        // 🔁 Auto-login
         if (auth.currentUser != null) {
             goToMain()
             return
@@ -43,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signInWithGoogle() {
-        val credentialManager = CredentialManager.create(this)
+        val credentialManager = CredentialManager.Companion.create(this)
 
         val googleIdOption = GetGoogleIdOption.Builder()
             .setFilterByAuthorizedAccounts(false)
@@ -63,11 +66,11 @@ class LoginActivity : AppCompatActivity() {
 
                 val credential = result.credential
 
-                if (credential is androidx.credentials.CustomCredential &&
-                    credential.type == GoogleIdTokenCredential.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
+                if (credential is CustomCredential &&
+                    credential.type == GoogleIdTokenCredential.Companion.TYPE_GOOGLE_ID_TOKEN_CREDENTIAL
                 ) {
                     val googleCredential =
-                        GoogleIdTokenCredential.createFrom(credential.data)
+                        GoogleIdTokenCredential.Companion.createFrom(credential.data)
 
                     firebaseAuthWithGoogle(googleCredential)
                 } else {

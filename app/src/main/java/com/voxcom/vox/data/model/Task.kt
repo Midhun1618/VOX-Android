@@ -1,4 +1,4 @@
-package com.voxcom.vox
+package com.voxcom.vox.data.model
 
 import com.google.firebase.Timestamp
 

@@ -1,5 +1,6 @@
-package com.voxcom.vox
+package com.voxcom.vox.network
 
+import com.voxcom.vox.data.model.WeatherResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

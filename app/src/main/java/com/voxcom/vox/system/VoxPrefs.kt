@@ -1,3 +1,5 @@
+package com.voxcom.vox.system
+
 import android.content.Context
 
 object VoxPrefs {

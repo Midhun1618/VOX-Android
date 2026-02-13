@@ -1,4 +1,4 @@
-package com.voxcom.vox
+package com.voxcom.vox.system
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

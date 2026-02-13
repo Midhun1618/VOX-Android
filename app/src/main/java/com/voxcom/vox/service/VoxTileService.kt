@@ -1,8 +1,10 @@
-package com.voxcom.vox
+package com.voxcom.vox.service
 
 import android.content.Intent
+import android.os.Build
 import android.service.quicksettings.Tile
 import android.service.quicksettings.TileService
+import com.voxcom.vox.system.VoxPrefs
 
 class VoxTileService : TileService() {
 
@@ -24,7 +26,7 @@ class VoxTileService : TileService() {
             val intent = Intent(this, VoxService::class.java)
             intent.action = "VOX_WAKE"
 
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 startForegroundService(intent)
             else
                 startService(intent)

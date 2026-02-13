@@ -1,4 +1,4 @@
-package com.voxcom.vox
+package com.voxcom.vox.data.model
 
 data class WeatherResponse(
     val main: Main,

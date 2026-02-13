@@ -1,10 +1,11 @@
-package com.voxcom.vox
+package com.voxcom.vox.service
 
 import android.accessibilityservice.AccessibilityService
+import android.content.Intent
+import android.os.Build
 import android.util.Log
 import android.view.KeyEvent
 import android.view.accessibility.AccessibilityEvent
-import android.content.Intent
 
 class VoxAccessibilityService : AccessibilityService() {
 
@@ -44,7 +45,7 @@ class VoxAccessibilityService : AccessibilityService() {
         val intent = Intent(this, VoxService::class.java)
         intent.action = VoxService.ACTION_WAKE
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
             startForegroundService(intent)
         else
             startService(intent)
