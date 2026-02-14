@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context=".ui.main.MainActivity"
     android:background="@color/black">
 
     <LinearLayout
@@ -158,9 +158,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Stats loading..."
-                android:layout_marginLeft="15dp"
+                android:layout_marginLeft="12dp"
                 android:textColor="@color/yellow_main"
                 android:fontFamily="@font/lowerpixel"/>
+            <TextView
+                android:id="@+id/tvDisciplie"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00"
+                android:layout_margin="6dp"
+                android:textSize="14sp"
+                android:padding="4dp"
+                android:background="@color/yellow_main"
+                android:textColor="@color/black"
+                android:fontFamily="@font/highlight"/>
 
 
         </LinearLayout>

@@ -43,7 +43,7 @@ object TaskRepository {
         db.collection("users")
             .document(userId)
             .set(
-                mapOf("totalTasks" to FieldValue.increment(1)),
+                mapOf("totalTask" to FieldValue.increment(1)),
                 SetOptions.merge()
             )
     }
@@ -60,7 +60,7 @@ object TaskRepository {
             .addOnSuccessListener {
                 db.collection("users")
                     .document(userId)
-                    .update("completedTasks", FieldValue.increment(1))
+                    .update("completedTask", FieldValue.increment(1))
             }
     }
 
@@ -68,10 +68,11 @@ object TaskRepository {
 
         val userId = uid() ?: return null
 
+        val now = Timestamp.now()
+
         return db.collection("users")
             .document(userId)
             .collection("tasks")
-            .whereEqualTo("completed", false)
             .addSnapshotListener { snapshot, error ->
 
                 if (error != null || snapshot == null) return@addSnapshotListener
@@ -88,5 +89,21 @@ object TaskRepository {
                 onChange(tasks)
             }
     }
+
+    fun getExpiredCount(onResult: (Int) -> Unit) {
+
+        val userId = uid() ?: return
+
+        val now = Timestamp.now()
+
+        db.collection("users")
+            .document(userId)
+            .collection("tasks")
+            .get()
+            .addOnSuccessListener { snapshot ->
+                onResult(snapshot.size())
+            }
+    }
+
 
 }

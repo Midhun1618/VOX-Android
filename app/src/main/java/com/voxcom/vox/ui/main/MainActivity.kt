@@ -40,8 +40,11 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvUsername: TextView
     private lateinit var tvEmail: TextView
     private lateinit var tvCode: TextView
+    private lateinit var tvDescipline: TextView
     private lateinit var avatar: ImageView
     private var taskListener: ListenerRegistration? = null
+    private var statsListener: ListenerRegistration? = null
+
 
 
     private val permissionLauncher =
@@ -85,7 +88,8 @@ class MainActivity : AppCompatActivity() {
     private fun initializeApp() {
         voxManager = VoxAssistantManager(this)
 
-        loadUser()
+        bindUserStaticInfo()
+        observeStats()
         loadWeather()
         setupListeners()
     }
@@ -95,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         btnAdd = findViewById(R.id.btnAdd)
         voxEmote = findViewById(R.id.voxEmote)
         tvStats = findViewById(R.id.tvStats)
+        tvDescipline = findViewById(R.id.tvDisciplie)
         tvWeather = findViewById(R.id.tvWeather)
         tvTime = findViewById(R.id.tvCurrentTime)
         tvAmPm = findViewById(R.id.tvCurrentMeridian)
@@ -119,7 +124,10 @@ class MainActivity : AppCompatActivity() {
         rvTasks.layoutManager = LinearLayoutManager(this)
         rvTasks.adapter = adapter
 
-        taskListener = TaskRepository.listenTasks { adapter.update(it) }
+        taskListener = TaskRepository.listenTasks { tasks ->
+            adapter.update(tasks)
+        }
+
 
     }
 
@@ -155,15 +163,19 @@ class MainActivity : AppCompatActivity() {
 
         UserRepository.ensureUserDocument()
 
-        UserRepository.getStats { total, completed ->
+        statsListener = UserRepository.listenStats { total, completed, expired ->
+
             val discipline =
-                if (total == 0L) 0 else ((completed.toDouble() / total) * 100).toInt()
+                if (total == 0L) 0
+                else ((completed.toDouble() / total) * 100).toInt()
+
+            tvDescipline.text = "$discipline%"
 
             tvStats.text = """
-                Total: $total
-                Completed: $completed
-                Discipline: $discipline%
-            """.trimIndent()
+            ADDED: $total
+            DONE: $completed
+            MISSED: $expired
+        """.trimIndent()
         }
 
         UserRepository.getProfile { name, avatarIndex, code ->
@@ -230,10 +242,48 @@ class MainActivity : AppCompatActivity() {
 
         dialog.show()
     }
+    private fun bindUserStaticInfo() {
+
+        val user = FirebaseAuth.getInstance().currentUser ?: return
+        tvEmail.text = user.email ?: "No email"
+
+        UserRepository.ensureUserDocument()
+
+        UserRepository.getProfile { name, avatarIndex, code ->
+            tvUsername.text = "Name: ${name ?: "User"}"
+            tvCode.text = "CODE: ${code ?: "---"}"
+
+            val avatars = listOf(
+                R.drawable.avatar1, R.drawable.avatar2, R.drawable.avatar3, R.drawable.avatar4,
+                R.drawable.avatar5, R.drawable.avatar6, R.drawable.avatar7, R.drawable.avatar8
+            )
+
+            avatarIndex?.let { if (it in avatars.indices) avatar.setImageResource(avatars[it]) }
+        }
+    }
+
+    private fun observeStats() {
+
+        statsListener = UserRepository.listenStats { total, completed, expired ->
+
+            val discipline = if (total == 0L) 0
+            else ((completed.toDouble() / total) * 100).toInt()
+
+            tvDescipline.text = "$discipline%"
+
+            tvStats.text = """
+        ADDED: $total
+        DONE: $completed
+        MISSED: $expired
+        """.trimIndent()
+        }
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
         taskListener?.remove()
+        statsListener?.remove()
         clockManager.stop()
     }
 }

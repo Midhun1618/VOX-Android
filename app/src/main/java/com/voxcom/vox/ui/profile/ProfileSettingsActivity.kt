@@ -88,7 +88,6 @@ class ProfileSettingsActivity : AppCompatActivity() {
 
             userRef.set(data)
                 .addOnSuccessListener {
-                    // ✅ User document is now COMPLETE
                     startActivity(Intent(this, MainActivity::class.java))
                     finish()
                 }
@@ -104,7 +103,7 @@ class ProfileSettingsActivity : AppCompatActivity() {
         }
     }
     private fun generateAccessCode(): String {
-        val chars = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789"
+        val chars = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789"
         return (1..6)
             .map { chars.random() }
             .joinToString("")
