@@ -10,17 +10,12 @@ import com.voxcom.vox.system.SoundPlayer
 
 class CompleteTaskDialog(
     private val context: Context,
-    private val taskId: String
-) {
-
+    private val taskId: String){
     fun show() {
 
-        val view = LayoutInflater.from(context)
-            .inflate(R.layout.dialog_complete_task, null)
+        val view = LayoutInflater.from(context).inflate(R.layout.dialog_complete_task, null)
 
-        val dialog = AlertDialog.Builder(context)
-            .setView(view)
-            .create()
+        val dialog = AlertDialog.Builder(context).setView(view).create()
 
         view.findViewById<TextView>(R.id.btnYes).setOnClickListener {
             SoundPlayer.wake(context, R.raw.onclick01_sfx)

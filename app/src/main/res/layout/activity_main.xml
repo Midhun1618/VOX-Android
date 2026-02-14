@@ -101,8 +101,14 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_margin="3dp"
-            android:gravity="center_vertical"
-            android:background="@drawable/container_m">
+            android:gravity="center_vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/container_m">
             <TextView
                 android:id="@+id/tvCurrentTime"
                 android:layout_width="wrap_content"
@@ -135,43 +141,54 @@
                     android:textColor="@color/yellow_main"
                     android:fontFamily="@font/lowerpixel"/>
             </LinearLayout>
-            <androidx.constraintlayout.widget.ConstraintLayout
+            </LinearLayout>
+            <LinearLayout
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@color/yellow_main">
+                android:layout_height="match_parent"
+                android:gravity="center_horizontal"
+                android:layout_marginHorizontal="5dp"
+                android:orientation="vertical"
+                android:background="@drawable/container_m">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="FOCUS"
+                    android:textAlignment="center"
+                    android:textSize="10sp"
+                    android:padding="4dp"
+                    android:background="@color/yellow_main"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/highlight"/>
+                <TextView
+                    android:id="@+id/tvDisciplie"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="00%"
+                    android:textSize="30sp"
+                    android:paddingHorizontal="10dp"
+                    android:textColor="@color/yellow_main"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/lowerpixel"/>
 
-                <ImageView
-                    android:id="@+id/loadBtn"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_margin="8dp"
-                    android:src="@drawable/load1"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_weight="2"
+                android:layout_width="wrap_content"
+                android:gravity="center"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:background="@drawable/container_m">
             <TextView
                 android:id="@+id/tvStats"
                 android:layout_width="wrap_content"
+                android:paddingHorizontal="10dp"
                 android:layout_height="wrap_content"
                 android:text="Stats loading..."
-                android:layout_marginLeft="12dp"
                 android:textColor="@color/yellow_main"
                 android:fontFamily="@font/lowerpixel"/>
-            <TextView
-                android:id="@+id/tvDisciplie"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="00"
-                android:layout_margin="6dp"
-                android:textSize="14sp"
-                android:padding="4dp"
-                android:background="@color/yellow_main"
-                android:textColor="@color/black"
-                android:fontFamily="@font/highlight"/>
+            </LinearLayout>
 
 
         </LinearLayout>

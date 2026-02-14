@@ -121,7 +121,6 @@ class MainActivity : AppCompatActivity() {
         rvTasks.layoutManager = LinearLayoutManager(this)
         rvTasks.adapter = adapter
 
-        // 🔥 Firestore → Brain
         taskListener = TaskRepository.listenTasks { tasks ->
             TaskManager.update(tasks)
         }
@@ -131,11 +130,9 @@ class MainActivity : AppCompatActivity() {
 
         TaskManager.observe { _ ->
 
-            // ---------- Active Tasks Recycler ----------
             val activeTasks = TaskManager.active()
             adapter.update(activeTasks)
 
-            // ---------- Stats ----------
             val (total, done, missed) = TaskManager.stats()
 
             tvStats.text = """

@@ -88,8 +88,6 @@ object TaskRepository {
             }
     }
 
-
-
     fun getExpiredCount(onResult: (Int) -> Unit) {
 
         val userId = uid() ?: return
@@ -105,6 +103,4 @@ object TaskRepository {
                 onResult(snapshot.size())
             }
     }
-
-
 }
