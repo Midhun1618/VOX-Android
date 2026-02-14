@@ -81,8 +81,6 @@ class ProfileSettingsActivity : AppCompatActivity() {
                 "username" to username,
                 "avatarIndex" to selectedAvatar,
                 "accessCode" to generateAccessCode(),
-                "totalTask" to 0,
-                "completedTask" to 0,
                 "createdAt" to Timestamp.now()
             )
 

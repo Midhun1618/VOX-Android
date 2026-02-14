@@ -30,24 +30,6 @@ object UserRepository {
         }
     }
 
-    fun getStats(onResult: (total: Long, completed: Long, expired: Int) -> Unit) {
-
-        val uid = uid() ?: return
-
-        db.collection("users").document(uid)
-            .get()
-            .addOnSuccessListener { doc ->
-
-                val total = doc.getLong("totalTask") ?: 0
-                val completed = doc.getLong("completedTask") ?: 0
-
-                TaskRepository.getExpiredCount { expired ->
-                    onResult(total, completed, expired)
-                }
-            }
-    }
-
-
     fun getProfile(onResult: (username: String?, avatarIndex: Int?, code: String?) -> Unit) {
         val uid = uid() ?: return
 
@@ -59,23 +41,6 @@ object UserRepository {
                     doc.getLong("avatarIndex")?.toInt(),
                     doc.getString("accessCode")
                 )
-            }
-    }
-    fun listenStats(onResult: (total: Long, completed: Long, expired: Int) -> Unit): ListenerRegistration? {
-
-        val uid = uid() ?: return null
-
-        return db.collection("users").document(uid)
-            .addSnapshotListener { doc, _ ->
-
-                if (doc == null || !doc.exists()) return@addSnapshotListener
-
-                val total = doc.getLong("totalTask") ?: 0
-                val completed = doc.getLong("completedTask") ?: 0
-
-                TaskRepository.getExpiredCount { expired ->
-                    onResult(total, completed, expired)
-                }
             }
     }
 

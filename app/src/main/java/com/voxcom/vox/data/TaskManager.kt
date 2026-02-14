@@ -23,13 +23,12 @@ object TaskManager {
         listeners.forEach { it(tasks) }
     }
 
-    // ---------- Filters ----------
-
     fun active() = tasks.filter { it.state() == TaskState.ACTIVE }
 
     fun history() = tasks.filter { it.state() != TaskState.ACTIVE }
 
     fun stats(): Triple<Int, Int, Int> {
+        println("TASKS INSIDE MANAGER = ${tasks.size}")
         val total = tasks.size
         val completed = tasks.count { it.state() == TaskState.COMPLETED }
         val missed = tasks.count { it.state() == TaskState.MISSED }

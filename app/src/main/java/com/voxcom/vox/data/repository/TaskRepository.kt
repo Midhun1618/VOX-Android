@@ -60,7 +60,6 @@ object TaskRepository {
             .addOnSuccessListener {
                 db.collection("users")
                     .document(userId)
-                    .update("completedTask", FieldValue.increment(1))
             }
     }
 
@@ -85,22 +84,6 @@ object TaskRepository {
                 }
 
                 onChange(tasks)
-            }
-    }
-
-    fun getExpiredCount(onResult: (Int) -> Unit) {
-
-        val userId = uid() ?: return
-
-        val now = Timestamp.now()
-
-        db.collection("users")
-            .document(userId)
-            .collection("tasks")
-
-            .get()
-            .addOnSuccessListener { snapshot ->
-                onResult(snapshot.size())
             }
     }
 }

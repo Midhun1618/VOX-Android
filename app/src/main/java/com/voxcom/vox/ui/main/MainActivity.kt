@@ -9,6 +9,7 @@ import android.os.Looper
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,6 +23,8 @@ import com.voxcom.vox.data.repository.WeatherRepository
 import com.voxcom.vox.service.VoxService
 import com.voxcom.vox.system.*
 import com.voxcom.vox.ui.dialog.CompleteTaskDialog
+import com.voxcom.vox.ui.fragments.ActiveTasksFragment
+import com.voxcom.vox.ui.fragments.PastTasksFragment
 import com.voxcom.vox.voice.VoxAssistantManager
 import kotlinx.coroutines.launch
 
@@ -37,13 +40,17 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvWeather: TextView
     private lateinit var tvTime: TextView
     private lateinit var tvAmPm: TextView
-    private lateinit var rvTasks: RecyclerView
     private lateinit var tvUsername: TextView
     private lateinit var tvEmail: TextView
     private lateinit var tvCode: TextView
     private lateinit var tvDescipline: TextView
     private lateinit var avatar: ImageView
     private var taskListener: ListenerRegistration? = null
+    private lateinit var fragActive: TextView
+    private lateinit var fragPast: TextView
+    private lateinit var fragReminder: TextView
+    private lateinit var tabs: List<TextView>
+
 
     private val permissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { result ->
@@ -57,8 +64,9 @@ class MainActivity : AppCompatActivity() {
         VoxNotification.createChannel(this)
 
         bindViews()
-        setupRecycler()
         clockManager.start(tvTime, tvAmPm)
+
+        tabs = listOf(fragActive, fragPast, fragReminder)
 
         requestStartupPermissions()
     }
@@ -88,10 +96,19 @@ class MainActivity : AppCompatActivity() {
 
         bindUserStaticInfo()
         observeAppState()
+        startTaskSync()
         loadWeather()
         setupListeners()
+
+        openFragment(ActiveTasksFragment())
     }
 
+    private fun startTaskSync() {
+
+        taskListener = TaskRepository.listenTasks { tasks ->
+            TaskManager.update(tasks)
+        }
+    }
     private fun bindViews() {
         etTask = findViewById(R.id.etTask)
         btnAdd = findViewById(R.id.btnAdd)
@@ -101,7 +118,9 @@ class MainActivity : AppCompatActivity() {
         tvWeather = findViewById(R.id.tvWeather)
         tvTime = findViewById(R.id.tvCurrentTime)
         tvAmPm = findViewById(R.id.tvCurrentMeridian)
-        rvTasks = findViewById(R.id.rvTasks)
+        fragActive = findViewById(R.id.btnActive)
+        fragPast = findViewById(R.id.btnPast)
+        fragReminder = findViewById(R.id.btnReminder)
 
         tvUsername = findViewById(R.id.tvUsername)
         tvEmail = findViewById(R.id.tvEmail)
@@ -109,44 +128,24 @@ class MainActivity : AppCompatActivity() {
         avatar = findViewById(R.id.myAvatar)
     }
 
-    private fun setupRecycler() {
-
-        adapter = TaskAdapter(
-            tasks = emptyList(),
-            onClick = { task ->
-                CompleteTaskDialog(this, task.id).show()
-            }
-        )
-
-        rvTasks.layoutManager = LinearLayoutManager(this)
-        rvTasks.adapter = adapter
-
-        taskListener = TaskRepository.listenTasks { tasks ->
-            TaskManager.update(tasks)
-        }
-    }
 
     private fun observeAppState() {
 
-        TaskManager.observe { _ ->
-
-            val activeTasks = TaskManager.active()
-            adapter.update(activeTasks)
+        TaskManager.observe {
 
             val (total, done, missed) = TaskManager.stats()
 
             tvStats.text = """
-            ADDED: $total
-            DONE: $done
-            MISSED: $missed
-        """.trimIndent()
+                ADDED: $total
+                DONE: $done
+                MISSED: $missed
+            """.trimIndent()
 
-            val discipline =
-                if (total == 0) 0 else ((done.toFloat() / total) * 100).toInt()
-
+            val discipline = if (total == 0) 0 else ((done.toFloat() / total) * 100).toInt()
             tvDescipline.text = "$discipline%"
         }
     }
+
 
 
     private fun setupListeners() {
@@ -159,6 +158,21 @@ class MainActivity : AppCompatActivity() {
 
             TaskRepository.addTask(title)
             etTask.text.clear()
+        }
+
+        fragActive.setOnClickListener {
+            openFragment(ActiveTasksFragment())
+            selectTab(0)
+        }
+
+        fragPast.setOnClickListener {
+            openFragment(PastTasksFragment())
+            selectTab(1)
+        }
+
+        fragReminder.setOnClickListener {
+            openFragment(PastTasksFragment())
+            selectTab(2)
         }
 
         voxEmote.setOnClickListener {
@@ -235,6 +249,22 @@ class MainActivity : AppCompatActivity() {
             )
 
             avatarIndex?.let { if (it in avatars.indices) avatar.setImageResource(avatars[it]) }
+        }
+    }
+    private fun openFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragmentContainer, fragment)
+            .commit()
+    }
+    private fun selectTab(index: Int) {
+
+        tabs.forEachIndexed { i, tab ->
+
+            if (i == index) {
+                tab.setBackgroundColor(getColor(R.color.yellow_main))
+            } else {
+                tab.setBackgroundColor(getColor(R.color.yellow_main30))
+            }
         }
     }
 
