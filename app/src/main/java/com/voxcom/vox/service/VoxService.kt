@@ -18,7 +18,6 @@ class VoxService : Service() {
         const val ACTION_WAKE = "VOX_WAKE"
         const val ACTION_START = "VOX_START"
     }
-
     private val CHANNEL_ID = "vox_service_channel"
     private lateinit var vox: VoxSpeechRecognizer
 
@@ -29,8 +28,8 @@ class VoxService : Service() {
             stopSelf()
             return
         }
-
         startForeground(1, buildNotification())
+
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {

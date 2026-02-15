@@ -2,10 +2,8 @@ package com.voxcom.vox.data.repository
 
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
-import com.google.firebase.firestore.SetOptions
 import java.util.concurrent.TimeUnit
 import com.voxcom.vox.data.model.Task
 
@@ -13,7 +11,6 @@ import com.voxcom.vox.data.model.Task
 object TaskRepository {
 
     private val db = FirebaseFirestore.getInstance()
-
     private fun uid(): String? {
         return FirebaseAuth.getInstance().currentUser?.uid
     }
@@ -39,13 +36,6 @@ object TaskRepository {
             .document(userId)
             .collection("tasks")
             .add(task)
-
-        db.collection("users")
-            .document(userId)
-            .set(
-                mapOf("totalTask" to FieldValue.increment(1)),
-                SetOptions.merge()
-            )
     }
 
     fun markCompleted(taskId: String) {

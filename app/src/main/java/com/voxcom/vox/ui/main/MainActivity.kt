@@ -11,8 +11,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
 import com.voxcom.vox.R
@@ -22,7 +20,6 @@ import com.voxcom.vox.data.repository.UserRepository
 import com.voxcom.vox.data.repository.WeatherRepository
 import com.voxcom.vox.service.VoxService
 import com.voxcom.vox.system.*
-import com.voxcom.vox.ui.dialog.CompleteTaskDialog
 import com.voxcom.vox.ui.fragments.ActiveTasksFragment
 import com.voxcom.vox.ui.fragments.PastTasksFragment
 import com.voxcom.vox.voice.VoxAssistantManager
@@ -30,7 +27,6 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var adapter: TaskAdapter
     private lateinit var voxManager: VoxAssistantManager
     private val clockManager = ClockManager()
     private lateinit var etTask: EditText
@@ -50,6 +46,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var fragPast: TextView
     private lateinit var fragReminder: TextView
     private lateinit var tabs: List<TextView>
+    private var authListener: FirebaseAuth.AuthStateListener? = null
+    private var clipboardListener: ListenerRegistration? = null
+    private var clipboardObserver: ClipboardForegroundObserver? = null
 
 
     private val permissionLauncher =
@@ -62,6 +61,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         VoxNotification.createChannel(this)
+
 
         bindViews()
         clockManager.start(tvTime, tvAmPm)
@@ -99,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         startTaskSync()
         loadWeather()
         setupListeners()
+        startClipboardAfterLogin()
 
         openFragment(ActiveTasksFragment())
     }
@@ -109,6 +110,19 @@ class MainActivity : AppCompatActivity() {
             TaskManager.update(tasks)
         }
     }
+
+    private fun startClipboardAfterLogin() {
+
+        FirebaseAuth.getInstance().addAuthStateListener { auth ->
+
+            val user = auth.currentUser ?: return@addAuthStateListener
+
+            clipboardObserver = ClipboardForegroundObserver(this)
+            clipboardObserver?.start()
+        }
+    }
+
+
     private fun bindViews() {
         etTask = findViewById(R.id.etTask)
         btnAdd = findViewById(R.id.btnAdd)
@@ -267,6 +281,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
