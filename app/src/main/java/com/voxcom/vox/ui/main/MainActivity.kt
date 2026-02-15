@@ -6,6 +6,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -14,7 +16,9 @@ import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
 import com.voxcom.vox.R
+import com.voxcom.vox.data.ClipboardMemory
 import com.voxcom.vox.data.TaskManager
+import com.voxcom.vox.data.repository.ClipboardRepository
 import com.voxcom.vox.data.repository.TaskRepository
 import com.voxcom.vox.data.repository.UserRepository
 import com.voxcom.vox.data.repository.WeatherRepository
@@ -30,6 +34,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var voxManager: VoxAssistantManager
     private val clockManager = ClockManager()
     private lateinit var etTask: EditText
+    private lateinit var clipboardBox: TextView
     private lateinit var btnAdd: TextView
     private lateinit var voxEmote: ImageView
     private lateinit var tvStats: TextView
@@ -41,14 +46,18 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvCode: TextView
     private lateinit var tvDescipline: TextView
     private lateinit var avatar: ImageView
+    private lateinit var copyBtn: ImageView
     private var taskListener: ListenerRegistration? = null
+    private var clipboardListener: ListenerRegistration? = null
     private lateinit var fragActive: TextView
     private lateinit var fragPast: TextView
     private lateinit var fragReminder: TextView
     private lateinit var tabs: List<TextView>
-    private var authListener: FirebaseAuth.AuthStateListener? = null
-    private var clipboardListener: ListenerRegistration? = null
-    private var clipboardObserver: ClipboardForegroundObserver? = null
+    private lateinit var tvLatestFromPc: TextView
+    private lateinit var btnCopyToPhone: TextView
+    private lateinit var etManualPaste: EditText
+    private lateinit var btnUploadClipboard: TextView
+    private lateinit var backClipboard: TextView
 
 
     private val permissionLauncher =
@@ -99,7 +108,8 @@ class MainActivity : AppCompatActivity() {
         startTaskSync()
         loadWeather()
         setupListeners()
-        startClipboardAfterLogin()
+        startClipboardLiveSync()
+
 
         openFragment(ActiveTasksFragment())
     }
@@ -108,17 +118,6 @@ class MainActivity : AppCompatActivity() {
 
         taskListener = TaskRepository.listenTasks { tasks ->
             TaskManager.update(tasks)
-        }
-    }
-
-    private fun startClipboardAfterLogin() {
-
-        FirebaseAuth.getInstance().addAuthStateListener { auth ->
-
-            val user = auth.currentUser ?: return@addAuthStateListener
-
-            clipboardObserver = ClipboardForegroundObserver(this)
-            clipboardObserver?.start()
         }
     }
 
@@ -135,6 +134,12 @@ class MainActivity : AppCompatActivity() {
         fragActive = findViewById(R.id.btnActive)
         fragPast = findViewById(R.id.btnPast)
         fragReminder = findViewById(R.id.btnReminder)
+
+        tvLatestFromPc = findViewById(R.id.tvLatestFromPc)
+        btnCopyToPhone = findViewById(R.id.btnCopyToPhone)
+        etManualPaste = findViewById(R.id.etManualPaste)
+        btnUploadClipboard = findViewById(R.id.btnUploadClipboard)
+        backClipboard = findViewById(R.id.backClipboard)
 
         tvUsername = findViewById(R.id.tvUsername)
         tvEmail = findViewById(R.id.tvEmail)
@@ -159,7 +164,6 @@ class MainActivity : AppCompatActivity() {
             tvDescipline.text = "$discipline%"
         }
     }
-
 
 
     private fun setupListeners() {
@@ -199,6 +203,59 @@ class MainActivity : AppCompatActivity() {
             showVoxPref()
             true
         }
+        btnCopyToPhone.setOnClickListener {
+
+            val text = tvLatestFromPc.text.toString()
+            if (text.isBlank()) return@setOnClickListener
+
+            val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            val clip = android.content.ClipData.newPlainText("VOX", text)
+            clipboard.setPrimaryClip(clip)
+
+            Toast.makeText(this, "Copied to phone clipboard", Toast.LENGTH_SHORT).show()
+        }
+
+        tvLatestFromPc.setOnClickListener {
+
+            tvLatestFromPc.visibility = View.GONE
+            btnCopyToPhone.visibility = View.GONE
+
+            etManualPaste.visibility = View.VISIBLE
+            btnUploadClipboard.visibility = View.VISIBLE
+            backClipboard.visibility = View.VISIBLE
+
+            etManualPaste.requestFocus()
+        }
+        backClipboard.setOnClickListener {
+
+            etManualPaste.visibility = View.GONE
+            btnUploadClipboard.visibility = View.GONE
+            backClipboard.visibility = View.GONE
+
+            tvLatestFromPc.visibility = View.VISIBLE
+            btnCopyToPhone.visibility = View.VISIBLE
+
+            etManualPaste.requestFocus()
+        }
+
+        btnUploadClipboard.setOnClickListener {
+
+            val text = etManualPaste.text.toString().trim()
+            if (text.isEmpty()) return@setOnClickListener
+
+            ClipboardRepository.push(text, "phone")
+
+            Toast.makeText(this, "Uploaded to PC", Toast.LENGTH_SHORT).show()
+
+            // Exit edit mode
+            etManualPaste.text.clear()
+            etManualPaste.visibility = View.GONE
+            btnUploadClipboard.visibility = View.GONE
+
+            tvLatestFromPc.visibility = View.VISIBLE
+            btnCopyToPhone.visibility = View.VISIBLE
+        }
+
     }
 
 
@@ -246,6 +303,19 @@ class MainActivity : AppCompatActivity() {
 
         dialog.show()
     }
+
+    private fun startClipboardLiveSync() {
+
+        clipboardListener = ClipboardRepository.listen { content, device, time ->
+
+            if (device == "phone") return@listen
+
+            runOnUiThread {
+                tvLatestFromPc.text = content
+            }
+        }
+    }
+
     private fun bindUserStaticInfo() {
 
         val user = FirebaseAuth.getInstance().currentUser ?: return
@@ -265,11 +335,13 @@ class MainActivity : AppCompatActivity() {
             avatarIndex?.let { if (it in avatars.indices) avatar.setImageResource(avatars[it]) }
         }
     }
+
     private fun openFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
             .commit()
     }
+
     private fun selectTab(index: Int) {
 
         tabs.forEachIndexed { i, tab ->
@@ -282,10 +354,11 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onDestroy() {
         super.onDestroy()
         taskListener?.remove()
+        clipboardListener?.remove()
         clockManager.stop()
     }
+
 }

@@ -8,6 +8,8 @@ import android.media.MediaPlayer
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
 import com.voxcom.vox.R
+import com.voxcom.vox.system.ClipboardActionReceiver
+import com.voxcom.vox.system.VoxNotification
 import com.voxcom.vox.system.VoxPrefs
 import com.voxcom.vox.ui.main.MainActivity
 import com.voxcom.vox.voice.VoxCommandProcessor
@@ -47,17 +49,31 @@ class VoxService : Service() {
     private fun buildNotification(): Notification {
 
         val openIntent = Intent(this, MainActivity::class.java)
-        val pendingIntent = PendingIntent.getActivity(
-            this, 0, openIntent,
-            PendingIntent.FLAG_IMMUTABLE
+        val openPendingIntent = PendingIntent.getActivity(
+            this, 0, openIntent, PendingIntent.FLAG_IMMUTABLE
         )
 
-        return NotificationCompat.Builder(this, CHANNEL_ID)
+        val copyIntent = Intent(this, ClipboardActionReceiver::class.java).apply {
+            action = "COPY_TO_VOX"
+            `package` = packageName
+        }
+
+
+        val copyPendingIntent = PendingIntent.getBroadcast(
+            this,
+            1,
+            copyIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+
+        return NotificationCompat.Builder(this, VoxNotification.SERVICE_CHANNEL)
             .setContentTitle("VOX Assistant Active")
-            .setContentText("Listening for trigger")
+            .setContentText("Tap COPY to send clipboard to PC")
             .setSmallIcon(R.drawable.ic_stat_vox)
-            .setContentIntent(pendingIntent)
+            .setContentIntent(openPendingIntent)
             .setOngoing(true)
+            .addAction(R.drawable.ic_copy, "COPY TO VOX", copyPendingIntent)
             .setCategory(Notification.CATEGORY_SERVICE)
             .build()
     }

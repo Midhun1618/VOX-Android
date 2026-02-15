@@ -40,9 +40,6 @@
         <activity
             android:name=".ui.profile.ProfileSettingsActivity"
             android:exported="false" />
-        <receiver
-            android:name=".system.ClipboardActionReceiver"
-            android:exported="false"/>
         <activity
             android:name=".ui.auth.LoginActivity"
             android:exported="true">
@@ -54,6 +51,22 @@
         <activity
             android:name=".ui.main.MainActivity"
             android:exported="false"/>
+        <service
+            android:name=".system.VoxClipboardAccessibilityService"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
+            android:exported="false">
+
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/vox_clipboard_service_config"/>
+        </service>
+
+        <receiver android:name=".system.ClipboardActionReceiver" android:exported="false"/>
+
     </application>
 
 </manifest>

@@ -2,11 +2,17 @@ package com.voxcom.vox.data
 
 object ClipboardMemory {
 
-    private var lastCopied: String? = null
+    private var cached: String? = null
 
-    fun save(text: String) {
-        lastCopied = text
+    fun set(text: String?) {
+        cached = text?.trim()
     }
 
-    fun get(): String? = lastCopied
+    fun get(): String? = cached
+
+    fun clear() {
+        cached = null
+    }
+
+    fun hasData(): Boolean = !cached.isNullOrBlank()
 }
