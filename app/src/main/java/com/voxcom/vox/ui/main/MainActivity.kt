@@ -6,7 +6,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,7 +15,6 @@ import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
 import com.voxcom.vox.R
-import com.voxcom.vox.data.ClipboardMemory
 import com.voxcom.vox.data.TaskManager
 import com.voxcom.vox.data.repository.ClipboardRepository
 import com.voxcom.vox.data.repository.TaskRepository
@@ -34,7 +32,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var voxManager: VoxAssistantManager
     private val clockManager = ClockManager()
     private lateinit var etTask: EditText
-    private lateinit var clipboardBox: TextView
     private lateinit var btnAdd: TextView
     private lateinit var voxEmote: ImageView
     private lateinit var tvStats: TextView
@@ -46,7 +43,6 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvCode: TextView
     private lateinit var tvDescipline: TextView
     private lateinit var avatar: ImageView
-    private lateinit var copyBtn: ImageView
     private var taskListener: ListenerRegistration? = null
     private var clipboardListener: ListenerRegistration? = null
     private lateinit var fragActive: TextView

@@ -42,16 +42,31 @@ object ClipboardRepository {
 
         val reference = ref() ?: return null
 
-        return reference.addSnapshotListener { doc, _ ->
+        return reference.addSnapshotListener { doc, error ->
 
-            if (doc == null || !doc.exists()) return@addSnapshotListener
+            Log.d("VOX_CLIP", "LISTENER TRIGGERED")
 
-            val content = doc.getString("content") ?: return@addSnapshotListener
-            val device = doc.getString("device") ?: return@addSnapshotListener
-            val time = doc.getTimestamp("timestamp")?.seconds ?: return@addSnapshotListener
+            if (error != null) {
+                Log.d("VOX_CLIP", "ERROR: ${error.message}")
+                return@addSnapshotListener
+            }
+
+            if (doc == null || !doc.exists()) {
+                Log.d("VOX_CLIP", "NO DOCUMENT")
+                return@addSnapshotListener
+            }
+
+            val content = doc.getString("content")
+            val device = doc.getString("device")
+            val time = doc.getTimestamp("timestamp")?.seconds
+
+            Log.d("VOX_CLIP", "DATA -> $content | $device | $time")
+
+            if (content == null || device == null || time == null) return@addSnapshotListener
 
             onChange(content, device, time)
         }
     }
+
 
 }
