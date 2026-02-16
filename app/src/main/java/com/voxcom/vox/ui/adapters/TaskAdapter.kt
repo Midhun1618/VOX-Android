@@ -1,13 +1,13 @@
-package com.voxcom.vox.ui.main
+package com.voxcom.vox.ui.adapters
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.google.firebase.Timestamp
 import com.voxcom.vox.R
 import com.voxcom.vox.data.model.Task
-import com.google.firebase.Timestamp
 import java.util.concurrent.TimeUnit
 
 class TaskAdapter(

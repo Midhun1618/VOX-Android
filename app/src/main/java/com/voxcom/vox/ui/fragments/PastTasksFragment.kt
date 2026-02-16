@@ -9,7 +9,7 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.voxcom.vox.R
 import com.voxcom.vox.data.model.Task
 import com.voxcom.vox.data.repository.TaskRepository
-import com.voxcom.vox.ui.main.TaskAdapter
+import com.voxcom.vox.ui.adapters.TaskAdapter
 
 class PastTasksFragment : Fragment(R.layout.fragment_past_tasks) {
 

@@ -27,6 +27,7 @@ android {
 
     buildFeatures {
         buildConfig = true   // ⭐ THIS WAS MISSING
+        viewBinding = true
     }
 
     buildTypes {

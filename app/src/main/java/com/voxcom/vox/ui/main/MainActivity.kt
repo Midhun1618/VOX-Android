@@ -1,7 +1,9 @@
 package com.voxcom.vox.ui.main
 
 import android.Manifest
+import android.app.DatePickerDialog
 import android.app.Dialog
+import android.app.TimePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -12,11 +14,14 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
 import com.voxcom.vox.R
+import com.voxcom.vox.data.ReminderManager
 import com.voxcom.vox.data.TaskManager
 import com.voxcom.vox.data.repository.ClipboardRepository
+import com.voxcom.vox.data.repository.ReminderRepository
 import com.voxcom.vox.data.repository.TaskRepository
 import com.voxcom.vox.data.repository.UserRepository
 import com.voxcom.vox.data.repository.WeatherRepository
@@ -24,15 +29,19 @@ import com.voxcom.vox.service.VoxService
 import com.voxcom.vox.system.*
 import com.voxcom.vox.ui.fragments.ActiveTasksFragment
 import com.voxcom.vox.ui.fragments.PastTasksFragment
+import com.voxcom.vox.ui.fragments.ReminderFragment
 import com.voxcom.vox.voice.VoxAssistantManager
 import kotlinx.coroutines.launch
+import java.util.Calendar
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var voxManager: VoxAssistantManager
     private val clockManager = ClockManager()
     private lateinit var etTask: EditText
+    private lateinit var etReminder: EditText
     private lateinit var btnAdd: TextView
+    private lateinit var btnAddreminder: TextView
     private lateinit var voxEmote: ImageView
     private lateinit var tvStats: TextView
     private lateinit var tvWeather: TextView
@@ -45,6 +54,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var avatar: ImageView
     private var taskListener: ListenerRegistration? = null
     private var clipboardListener: ListenerRegistration? = null
+    private var reminderListener: ListenerRegistration? = null
+
     private lateinit var fragActive: TextView
     private lateinit var fragPast: TextView
     private lateinit var fragReminder: TextView
@@ -105,7 +116,7 @@ class MainActivity : AppCompatActivity() {
         loadWeather()
         setupListeners()
         startClipboardLiveSync()
-
+        startReminderSync()
 
         openFragment(ActiveTasksFragment())
     }
@@ -121,6 +132,8 @@ class MainActivity : AppCompatActivity() {
     private fun bindViews() {
         etTask = findViewById(R.id.etTask)
         btnAdd = findViewById(R.id.btnAdd)
+        etReminder = findViewById(R.id.etReminder)
+        btnAddreminder = findViewById(R.id.btnAddreminder)
         voxEmote = findViewById(R.id.voxEmote)
         tvStats = findViewById(R.id.tvStats)
         tvDescipline = findViewById(R.id.tvDisciplie)
@@ -177,16 +190,31 @@ class MainActivity : AppCompatActivity() {
         fragActive.setOnClickListener {
             openFragment(ActiveTasksFragment())
             selectTab(0)
+
+            etReminder.visibility = View.GONE
+            btnAddreminder.visibility = View.GONE
+            etTask.visibility = View.VISIBLE
+            btnAdd.visibility = View.VISIBLE
         }
 
         fragPast.setOnClickListener {
             openFragment(PastTasksFragment())
             selectTab(1)
+
+            etReminder.visibility = View.GONE
+            btnAddreminder.visibility = View.GONE
+            etTask.visibility = View.VISIBLE
+            btnAdd.visibility = View.VISIBLE
         }
 
         fragReminder.setOnClickListener {
-            openFragment(PastTasksFragment())
+            openFragment(ReminderFragment())
             selectTab(2)
+
+            etReminder.visibility = View.VISIBLE
+            btnAddreminder.visibility = View.VISIBLE
+            etTask.visibility = View.GONE
+            btnAdd.visibility = View.GONE
         }
 
         voxEmote.setOnClickListener {
@@ -250,6 +278,15 @@ class MainActivity : AppCompatActivity() {
 
             tvLatestFromPc.visibility = View.VISIBLE
             btnCopyToPhone.visibility = View.VISIBLE
+        }
+
+        btnAddreminder.setOnClickListener {
+
+            val title = etReminder.text.toString().trim()
+            if (title.isEmpty()) return@setOnClickListener
+
+            showReminderDateTimePicker(title)
+            etReminder.text.clear()
         }
 
     }
@@ -350,10 +387,50 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showReminderDateTimePicker(title: String) {
+
+        val calendar = java.util.Calendar.getInstance()
+
+        DatePickerDialog(
+            this,
+            { _, year, month, day ->
+
+                TimePickerDialog(
+                    this,
+                    { _, hour, minute ->
+
+                        calendar.set(year, month, day, hour, minute, 0)
+
+                        val timeMillis = calendar.timeInMillis
+                        ReminderRepository.add(title, timeMillis)
+
+
+                        Toast.makeText(this, "Reminder set!", Toast.LENGTH_SHORT).show()
+                        etTask.text.clear()
+
+                    },
+                    calendar.get(Calendar.HOUR_OF_DAY),
+                    calendar.get(Calendar.MINUTE),
+                    false
+                ).show()
+
+            },
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
+        ).show()
+    }
+    private fun startReminderSync() {
+        reminderListener = ReminderRepository.listen()
+    }
+
+
+
     override fun onDestroy() {
         super.onDestroy()
         taskListener?.remove()
         clipboardListener?.remove()
+        reminderListener?.remove()
         clockManager.stop()
     }
 

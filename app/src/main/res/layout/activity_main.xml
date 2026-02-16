@@ -287,23 +287,46 @@
                 android:textColor="@color/yellow_secondary"
                 android:textColorHint="@color/yellow_secondary"
                 android:fontFamily="@font/lowerpixel"
+                android:visibility="visible"
                 android:hint="Enter task"/>
-                <TextView
-                    android:id="@+id/btnAdd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Add"
-                    android:soundEffectsEnabled="false"
-                    android:textStyle="bold"
-                    android:padding="10dp"
-                    android:textSize="20sp"
-                    android:textColor="@color/black"
-                    android:fontFamily="@font/lowerpixel"
-                    android:background="@color/yellow_main"/>
-
-
-
-
+            <TextView
+                android:id="@+id/btnAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add"
+                android:soundEffectsEnabled="false"
+                android:textStyle="bold"
+                android:padding="10dp"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/lowerpixel"
+                android:visibility="visible"
+                android:background="@color/yellow_main"/>
+            <EditText
+                android:id="@+id/etReminder"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:paddingLeft="10dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/yellow_secondary"
+                android:textColorHint="@color/yellow_secondary"
+                android:fontFamily="@font/lowerpixel"
+                android:visibility="gone"
+                android:hint="Enter reminder"/>
+            <TextView
+                android:id="@+id/btnAddreminder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add"
+                android:soundEffectsEnabled="false"
+                android:textStyle="bold"
+                android:padding="10dp"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/lowerpixel"
+                android:visibility="gone"
+                android:background="@color/yellow_main"/>
         </LinearLayout>
         <LinearLayout
             android:orientation="horizontal"
