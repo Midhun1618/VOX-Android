@@ -1,6 +1,7 @@
 package com.voxcom.vox.ui.main
 
 import android.Manifest
+import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.app.TimePickerDialog
@@ -101,10 +102,11 @@ class MainActivity : AppCompatActivity() {
             permissions.add(Manifest.permission.POST_NOTIFICATIONS)
 
         if (permissions.isEmpty()) {
-            initializeApp()
+            checkExactAlarmPermission()
         } else {
             permissionLauncher.launch(permissions.toTypedArray())
         }
+
     }
 
     private fun initializeApp() {
@@ -423,7 +425,36 @@ class MainActivity : AppCompatActivity() {
     private fun startReminderSync() {
         reminderListener = ReminderRepository.listen()
     }
+    private fun checkExactAlarmPermission() {
 
+        if (!PermissionManager.hasExactAlarm(this)) {
+            showExactAlarmDialog()
+            return
+        }
+
+        initializeApp()
+    }
+    private fun showExactAlarmDialog() {
+
+        AlertDialog.Builder(this)
+            .setTitle("Allow Reminder Alarms")
+            .setMessage("VOX needs permission to trigger reminders exactly on time.")
+            .setCancelable(false)
+            .setPositiveButton("Allow") { _, _ ->
+                PermissionManager.requestExactAlarm(this)
+            }
+            .setNegativeButton("Exit") { _, _ ->
+                finish()
+            }
+            .show()
+    }
+    override fun onResume() {
+        super.onResume()
+
+        if (::voxManager.isInitialized.not()) {
+            checkExactAlarmPermission()
+        }
+    }
 
 
     override fun onDestroy() {
