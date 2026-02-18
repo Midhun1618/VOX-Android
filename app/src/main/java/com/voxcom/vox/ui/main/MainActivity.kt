@@ -19,6 +19,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ListenerRegistration
 import com.voxcom.vox.R
+import com.voxcom.vox.data.ClipboardMemory
 import com.voxcom.vox.data.ReminderManager
 import com.voxcom.vox.data.TaskManager
 import com.voxcom.vox.data.repository.ClipboardRepository
@@ -269,6 +270,7 @@ class MainActivity : AppCompatActivity() {
             val text = etManualPaste.text.toString().trim()
             if (text.isEmpty()) return@setOnClickListener
 
+            ClipboardMemory.set(text)
             ClipboardRepository.push(text, "phone")
 
             Toast.makeText(this, "Uploaded to PC", Toast.LENGTH_SHORT).show()
@@ -343,13 +345,24 @@ class MainActivity : AppCompatActivity() {
 
         clipboardListener = ClipboardRepository.listen { content, device, time ->
 
+            // Ignore our own uploads
             if (device == "phone") return@listen
 
-            runOnUiThread {
-                tvLatestFromPc.text = content
-            }
+            // Prevent infinite sync loop
+            if (ClipboardMemory.get() == content) return@listen
+
+            ClipboardMemory.set(content)
+
+            // Update UI
+            tvLatestFromPc.text = content
+
+            // Update system clipboard safely
+            val clipboard = getSystemService(CLIPBOARD_SERVICE) as android.content.ClipboardManager
+            val clip = android.content.ClipData.newPlainText("VOX", content)
+            clipboard.setPrimaryClip(clip)
         }
     }
+
 
     private fun bindUserStaticInfo() {
 

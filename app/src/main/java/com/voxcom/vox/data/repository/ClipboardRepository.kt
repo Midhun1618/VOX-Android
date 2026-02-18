@@ -33,7 +33,7 @@ object ClipboardRepository {
         val data = hashMapOf(
             "content" to content,
             "device" to device,
-            "timestamp" to Timestamp.now()
+            "timestamp" to System.currentTimeMillis()
         )
         reference.set(data)
     }
@@ -58,7 +58,8 @@ object ClipboardRepository {
 
             val content = doc.getString("content")
             val device = doc.getString("device")
-            val time = doc.getTimestamp("timestamp")?.seconds
+            val time = doc.getLong("timestamp")
+
 
             Log.d("VOX_CLIP", "DATA -> $content | $device | $time")
 

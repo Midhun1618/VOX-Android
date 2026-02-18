@@ -193,12 +193,26 @@
 
 
         </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="c li p b o a r d"
+            android:fontFamily="@font/pixelbold"
+            android:textSize="20sp"
+            android:background="@color/yellow_main"
+            android:textColor="@color/black"
+            android:paddingLeft="8dp"
+            android:layout_marginHorizontal="3dp"
+            android:layout_marginTop="3dp"
+            android:textStyle="bold"/>
         <LinearLayout
             android:id="@+id/clipboardPanel"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_margin="3dp"
+            android:layout_marginHorizontal="3dp"
+            android:layout_marginBottom="3dp"
+            android:layout_marginTop="1dp"
             android:background="@drawable/container_m"
             android:visibility="visible">
 
@@ -226,7 +240,8 @@
                 android:textColor="@color/black"
                 android:fontFamily="@font/lowerpixel"
                 android:background="@color/yellow_main"
-                android:padding="8dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="16dp"
                 android:visibility="visible"/>
 
             <EditText
@@ -270,64 +285,7 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_margin="3dp"
-            android:gravity="center_vertical"
-            android:background="@drawable/container_m">
-            <EditText
-                android:id="@+id/etTask"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:textSize="18sp"
-                android:paddingLeft="10dp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/yellow_secondary"
-                android:textColorHint="@color/yellow_secondary"
-                android:fontFamily="@font/lowerpixel"
-                android:visibility="visible"
-                android:hint="Enter task"/>
-            <TextView
-                android:id="@+id/btnAdd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add"
-                android:soundEffectsEnabled="false"
-                android:textStyle="bold"
-                android:padding="10dp"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/lowerpixel"
-                android:visibility="visible"
-                android:background="@color/yellow_main"/>
-            <EditText
-                android:id="@+id/etReminder"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:textSize="18sp"
-                android:paddingLeft="10dp"
-                android:layout_height="wrap_content"
-                android:textColor="@color/yellow_secondary"
-                android:textColorHint="@color/yellow_secondary"
-                android:fontFamily="@font/lowerpixel"
-                android:visibility="gone"
-                android:hint="Enter reminder"/>
-            <TextView
-                android:id="@+id/btnAddreminder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add"
-                android:soundEffectsEnabled="false"
-                android:textStyle="bold"
-                android:padding="10dp"
-                android:textSize="20sp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/lowerpixel"
-                android:visibility="gone"
-                android:background="@color/yellow_main"/>
-        </LinearLayout>
+
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
@@ -381,11 +339,70 @@
                 android:text="REMINDERS"/>
 
         </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginHorizontal="3dp"
+            android:gravity="center_vertical"
+            android:background="@drawable/container_m">
+            <EditText
+                android:id="@+id/etTask"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:paddingLeft="10dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/yellow_secondary"
+                android:textColorHint="@color/yellow_secondary"
+                android:fontFamily="@font/lowerpixel"
+                android:visibility="visible"
+                android:hint="Enter task"/>
+            <TextView
+                android:id="@+id/btnAdd"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add"
+                android:soundEffectsEnabled="false"
+                android:textStyle="bold"
+                android:padding="10dp"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/lowerpixel"
+                android:visibility="visible"
+                android:background="@color/yellow_main"/>
+            <EditText
+                android:id="@+id/etReminder"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:textSize="18sp"
+                android:paddingLeft="10dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/yellow_secondary"
+                android:textColorHint="@color/yellow_secondary"
+                android:fontFamily="@font/lowerpixel"
+                android:visibility="gone"
+                android:hint="Enter reminder"/>
+            <TextView
+                android:id="@+id/btnAddreminder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Add"
+                android:soundEffectsEnabled="false"
+                android:textStyle="bold"
+                android:padding="10dp"
+                android:textSize="20sp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/lowerpixel"
+                android:visibility="gone"
+                android:background="@color/yellow_main"/>
+        </LinearLayout>
 
         <FrameLayout
             android:id="@+id/fragmentContainer"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="3dp"
             android:layout_marginHorizontal="3dp"
             android:background="@drawable/container_m"
             android:layout_weight="1"/>
