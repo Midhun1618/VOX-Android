@@ -266,7 +266,8 @@
                 android:textStyle="italic"
                 android:background="@color/yellow_main"
                 android:text="SYNC"
-                android:padding="8dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="16dp"
                 android:visibility="gone"/>
             <TextView
                 android:id="@+id/backClipboard"
