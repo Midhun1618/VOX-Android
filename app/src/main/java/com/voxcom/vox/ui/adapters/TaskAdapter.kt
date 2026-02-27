@@ -44,7 +44,7 @@ class TaskAdapter(
     override fun getItemCount() = tasks.size
 
     fun update(newTasks: List<Task>) {
-        tasks = newTasks
+        tasks = newTasks.sortedBy { it.expiresAt?.toDate()?.time ?: 0 }
         notifyDataSetChanged()
     }
 
