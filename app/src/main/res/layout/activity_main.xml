@@ -22,7 +22,8 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_marginTop="50dp"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
@@ -46,21 +47,21 @@
                         android:id="@+id/tvUsername"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
+                        android:textSize="14sp"
                         android:fontFamily="@font/lowerpixel"
                         android:textColor="@color/yellow_main"/>
                     <TextView
                         android:id="@+id/tvEmail"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
+                        android:textSize="14sp"
                         android:fontFamily="@font/lowerpixel"
                         android:textColor="@color/yellow_main"/>
                     <TextView
                         android:id="@+id/codeTv"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="18sp"
+                        android:textSize="16sp"
                         android:fontFamily="@font/lowerpixel"
                         android:textColor="@color/black"
                         android:textStyle="bold"
@@ -84,7 +85,7 @@
                     android:background="@color/yellow_main"
                     android:paddingLeft="5dp"
                     android:fontFamily="@font/pixelbold"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     android:textColor="@color/black"/>
                 <ImageView
                     android:id="@+id/voxEmote"
@@ -100,7 +101,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_margin="3dp"
+            android:layout_marginHorizontal="3dp"
+            android:layout_marginBottom="8dp"
             android:gravity="center_vertical">
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -113,7 +115,7 @@
                 android:id="@+id/tvCurrentTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="50sp"
+                android:textSize="45sp"
                 android:textColor="@color/yellow_main"
                 android:text="03:30"
                 android:layout_marginLeft="10dp"
@@ -129,7 +131,7 @@
                     android:id="@+id/tvWeather"
                     android:layout_weight="1"
                     android:text="@string/weather_not_found"
-                    android:textSize="15sp"
+                    android:textSize="12sp"
                     android:textColor="@color/yellow_main"
                     android:fontFamily="@font/lowerpixel"/>
                 <TextView
@@ -137,7 +139,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="PM"
-                    android:textSize="15sp"
+                    android:textSize="12sp"
                     android:textColor="@color/yellow_main"
                     android:fontFamily="@font/lowerpixel"/>
             </LinearLayout>
@@ -155,7 +157,7 @@
                     android:layout_height="wrap_content"
                     android:text="FOCUS"
                     android:textAlignment="center"
-                    android:textSize="10sp"
+                    android:textSize="8sp"
                     android:padding="4dp"
                     android:background="@color/yellow_main"
                     android:textColor="@color/black"
@@ -186,6 +188,7 @@
                 android:paddingHorizontal="10dp"
                 android:layout_height="wrap_content"
                 android:text="Stats loading..."
+                android:textSize="14sp"
                 android:textColor="@color/yellow_main"
                 android:fontFamily="@font/lowerpixel"/>
             </LinearLayout>
@@ -198,7 +201,7 @@
             android:layout_height="wrap_content"
             android:text="c li p b o a r d"
             android:fontFamily="@font/pixelbold"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:background="@color/yellow_main"
             android:textColor="@color/black"
             android:paddingLeft="8dp"
@@ -211,7 +214,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_marginHorizontal="3dp"
-            android:layout_marginBottom="3dp"
+            android:layout_marginBottom="8dp"
             android:layout_marginTop="1dp"
             android:background="@drawable/container_m"
             android:visibility="visible">
@@ -222,7 +225,7 @@
                 android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:text="Nothing received yet"
-                android:textSize="18sp"
+                android:textSize="14sp"
                 android:textColor="@color/yellow_main"
                 android:fontFamily="@font/lowerpixel"
                 android:textStyle="italic"
@@ -236,7 +239,7 @@
                 android:text="COPY"
                 android:textStyle="bold"
                 android:clickable="true"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textColor="@color/black"
                 android:fontFamily="@font/lowerpixel"
                 android:background="@color/yellow_main"
@@ -300,7 +303,7 @@
                 android:layout_weight="1"
                 android:id="@+id/btnActive"
                 android:clickable="true"
-                android:textSize="22sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:background="@color/yellow_main"
@@ -315,7 +318,7 @@
                 android:layout_weight="1"
                 android:id="@+id/btnPast"
                 android:clickable="true"
-                android:textSize="22sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:background="@color/yellow_main30"
@@ -330,7 +333,7 @@
                 android:layout_weight="1"
                 android:id="@+id/btnReminder"
                 android:clickable="true"
-                android:textSize="22sp"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 android:textColor="@color/black"
                 android:background="@color/yellow_main30"
@@ -351,7 +354,7 @@
                 android:id="@+id/etTask"
                 android:layout_width="0dp"
                 android:layout_weight="1"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:paddingLeft="10dp"
                 android:layout_height="wrap_content"
                 android:textColor="@color/yellow_secondary"
@@ -367,7 +370,7 @@
                 android:soundEffectsEnabled="false"
                 android:textStyle="bold"
                 android:padding="10dp"
-                android:textSize="20sp"
+                android:textSize="16sp"
                 android:textColor="@color/black"
                 android:fontFamily="@font/lowerpixel"
                 android:visibility="visible"

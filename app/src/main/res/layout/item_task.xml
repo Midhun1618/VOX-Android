@@ -15,7 +15,7 @@
         android:layout_weight="1"
         android:layout_height="wrap_content"
         android:text="Task title"
-        android:textSize="16sp"
+        android:textSize="14sp"
         android:textColor="@color/yellow_main"
         android:fontFamily="@font/lowerpixel"/>
     <ImageView
@@ -27,7 +27,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="23h 59m"
-        android:textSize="16sp"
-        android:textColor="@color/red_main"
+        android:textSize="14sp"
+        android:textColor="@color/light_grey50"
         android:fontFamily="@font/lowerpixel"/>
 </LinearLayout>
