@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.voxcom.vox.data.model.Reminder
+import com.voxcom.vox.data.model.Task
 import com.voxcom.vox.databinding.ItemReminderBinding
 import java.text.SimpleDateFormat
 import java.util.*
