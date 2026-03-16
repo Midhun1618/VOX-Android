@@ -229,7 +229,8 @@
                 android:textColor="@color/yellow_main"
                 android:fontFamily="@font/lowerpixel"
                 android:textStyle="italic"
-                android:padding="8dp"
+                android:paddingHorizontal="8dp"
+                android:paddingTop="2dp"
                 android:visibility="visible"/>
 
             <TextView
@@ -255,7 +256,9 @@
                 android:hint="Paste text here"
                 android:textStyle="italic"
                 android:textColor="@color/yellow_main"
-                android:textSize="18sp"
+                android:textSize="14sp"
+                android:paddingHorizontal="8dp"
+                android:paddingTop="2dp"
                 android:fontFamily="@font/lowerpixel"
                 android:visibility="gone"/>
 
@@ -264,7 +267,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/lowerpixel"
-                android:textSize="18sp"
+                android:textSize="16sp"
                 android:textColor="@color/black"
                 android:textStyle="italic"
                 android:background="@color/yellow_main"
