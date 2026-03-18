@@ -3,6 +3,8 @@ package com.voxcom.vox.ui.auth
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
+import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +26,9 @@ import kotlinx.coroutines.launch
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth: FirebaseAuth
+    private lateinit var tvLoading : TextView
+    private lateinit var loadingLayout : LinearLayout
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,10 +43,14 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         val signInButton = findViewById<TextView>(R.id.btnGoogleSignIn)
+        tvLoading        = findViewById(R.id.loading)
+        loadingLayout    = findViewById(R.id.loadinglayout)
+
 
         signInButton.setOnClickListener {
             playClickSound()
             signInWithGoogle()
+
         }
     }
 
@@ -63,7 +72,8 @@ class LoginActivity : AppCompatActivity() {
                     context = this@LoginActivity,
                     request = request
                 )
-
+                loadingLayout.visibility= View.VISIBLE
+                 tvLoading.text ="configuring account..."
                 val credential = result.credential
 
                 if (credential is CustomCredential &&
@@ -71,6 +81,7 @@ class LoginActivity : AppCompatActivity() {
                 ) {
                     val googleCredential =
                         GoogleIdTokenCredential.Companion.createFrom(credential.data)
+                    tvLoading.text ="fetching id.."
 
                     firebaseAuthWithGoogle(googleCredential)
                 } else {
@@ -85,13 +96,14 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun firebaseAuthWithGoogle(credential: GoogleIdTokenCredential) {
+        tvLoading.text ="authenticating..."
         val firebaseCredential =
             GoogleAuthProvider.getCredential(credential.idToken, null)
 
         auth.signInWithCredential(firebaseCredential)
             .addOnSuccessListener {
                 val user = auth.currentUser
-                Toast.makeText(this, "Firebase auth SUCCESS", Toast.LENGTH_SHORT).show()
+                tvLoading.text ="auth status: successfull"
                 println("🔥 Firebase user UID = ${user?.uid}")
                 routeAfterLogin(user?.email ?: "")
             }
@@ -101,6 +113,7 @@ class LoginActivity : AppCompatActivity() {
                     "Firebase auth FAILED: ${e.message}",
                     Toast.LENGTH_LONG
                 ).show()
+                tvLoading.text ="auth status: failed"
                 e.printStackTrace()
             }
     }
@@ -110,13 +123,13 @@ class LoginActivity : AppCompatActivity() {
         val uid = auth.currentUser!!.uid
         val db = FirebaseFirestore.getInstance()
 
-        println("📡 Checking Firestore user document for $uid")
+        tvLoading.text ="checking user doc.."
 
         db.collection("users")
             .document(uid)
             .get()
             .addOnSuccessListener { doc ->
-                println("📄 Firestore doc exists = ${doc.exists()}")
+                tvLoading.text ="user doc found..."
                 if (doc.exists() && doc.contains("username")) {
                     goToMain()
                 } else {
@@ -132,6 +145,7 @@ class LoginActivity : AppCompatActivity() {
                     "Firestore FAILED: ${e.message}",
                     Toast.LENGTH_LONG
                 ).show()
+                tvLoading.text ="firestore failed"
                 e.printStackTrace()
             }
     }

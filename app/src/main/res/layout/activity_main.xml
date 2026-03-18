@@ -285,7 +285,8 @@
                 android:textStyle="italic"
                 android:background="@color/yellow_main30"
                 android:text="X"
-                android:padding="8dp"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="16dp"
                 android:visibility="gone"/>
 
 
